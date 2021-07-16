@@ -23,7 +23,9 @@
 		"onlylys.leaper",
 		"visualstudioexptteam.vscodeintellicode",
 		"formulahendry.dotnet-test-explorer",
-		"rangav.vscode-thunder-client"
+		"rangav.vscode-thunder-client",
+		"mhutchie.git-graph",
+		"github.vscode-pull-request-github"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
