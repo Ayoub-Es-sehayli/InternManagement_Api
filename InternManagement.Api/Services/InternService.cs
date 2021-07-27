@@ -1,0 +1,27 @@
+using System.Threading.Tasks;
+using AutoMapper;
+using InternManagement.Api.Dtos;
+using InternManagement.Api.Models;
+using InternManagement.Api.Repository;
+
+namespace InternManagement.Api.Services
+{
+  public class InternService : IInternService
+  {
+    private readonly IInternRepository _repository;
+    private readonly IMapper _mapper;
+
+    public InternService(IInternRepository repository, IMapper mapper)
+    {
+      this._repository = repository;
+      this._mapper = mapper;
+    }
+
+    public async Task<InternDto> AddInternAsync(InternDto dto)
+    {
+      var intern = await _repository.AddInternAsync(_mapper.Map<Intern>(dto));
+      dto.Id = intern.Id;
+      return dto;
+    }
+  }
+}
