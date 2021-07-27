@@ -44,7 +44,7 @@ namespace InternManagement.Tests
         EndDate = new DateTime(2021, 8, 31),
         DivisionId = 1
       };
-      Assert.Equal<string>(model.Email, map.Map<Intern>(dto).Email);
+      Assert.Matches(model.Email, map.Map<Intern>(dto).Email);
     }
 
     [Fact]
