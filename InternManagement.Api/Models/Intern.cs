@@ -1,11 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using InternManagement.Api.Enums;
 
 namespace InternManagement.Api.Models
 {
   public class Intern
   {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
