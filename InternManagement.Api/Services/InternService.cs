@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using InternManagement.Api.Dtos;
@@ -32,6 +34,15 @@ namespace InternManagement.Api.Services
         return _mapper.Map<InternDto>(intern);
       }
       return null;
+    }
+
+    public async Task<IEnumerable<InternListItemDto>> GetInternsAsync()
+    {
+      var interns = await _repository.GetInternsAsync();
+
+      var dtos = _mapper.Map<IEnumerable<InternListItemDto>>(interns);
+
+      return dtos;
     }
   }
 }

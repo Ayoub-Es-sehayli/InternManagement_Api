@@ -149,5 +149,43 @@ namespace InternManagement.Tests
       var intern = await service.GetInternByIdAsync(id);
       Assert.Null(intern);
     }
+
+    [Fact]
+    public async Task GetInternsAsync_ReturnDtoList()
+    {
+      var interns = new List<Intern>
+      {
+        new Intern{
+          Id = 1,
+          FirstName = "Mohamed",
+          LastName = "Hariss",
+          Division = new Division
+          {
+            Name = "Division comptabilite et Fiscalite"
+          },
+          State = eInternState.AssignedDecision
+        }
+      };
+
+      var dtos = new List<InternListItemDto>
+      {
+        new InternListItemDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          Division = "Division comptabilite et Fiscalite",
+          State = eInternState.AssignedDecision
+        }
+      };
+
+      internRepositoryStub.Setup(repo => repo.GetInternsAsync().Result).Returns(interns);
+      mapper.Setup(map => map.Map<IEnumerable<InternListItemDto>>(interns)).Returns(dtos);
+
+      var service = new InternService(internRepositoryStub.Object, mapper.Object);
+      var result = await service.GetInternsAsync();
+
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+    }
   }
 }

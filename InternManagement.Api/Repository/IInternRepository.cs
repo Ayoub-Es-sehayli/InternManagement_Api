@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using InternManagement.Api.Models;
 
@@ -8,5 +9,6 @@ namespace InternManagement.Api.Repository
     Task<Intern> AddInternAsync(Intern model);
     Task<bool> InternExistsAsync(int id);
     Task<Intern> GetInternAsync(int id);
+    Task<IEnumerable<Intern>> GetInternsAsync();
   }
 }

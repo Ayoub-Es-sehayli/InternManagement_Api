@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InternManagement.Api.Enums;
 using InternManagement.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +43,20 @@ namespace InternManagement.Api.Repository
     private async Task SaveChangesAsync()
     {
       await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Intern>> GetInternsAsync()
+    {
+      return await _context.Interns.Select(intern => new Intern
+      {
+        Id = intern.Id,
+        FirstName = intern.FirstName,
+        LastName = intern.LastName,
+        Division = intern.Division,
+        State = intern.State
+      })
+      .Where(intern => intern.State != eInternState.FileClosed)
+      .ToListAsync();
     }
   }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AutoMapper;
 using InternManagement.Api.Dtos;
 using InternManagement.Api.Enums;
@@ -153,6 +154,42 @@ namespace InternManagement.Tests
         }
       };
       Assert.StrictEqual<eDocumentState>(model.Documents.CV, map.Map<InternDto>(dto).Documents[0]);
+    }
+
+    [Fact]
+    public void MapListInternListItemDto_ReturnDtoList()
+    {
+      var config = new MapperConfiguration(cfg =>
+      {
+        cfg.AddProfile<InternProfile>();
+      });
+      var map = config.CreateMapper();
+
+      var interns = new List<Intern>
+      {
+        new Intern{
+          Id = 1,
+          FirstName = "Mohamed",
+          LastName = "Hariss",
+          Division = new Division
+          {
+            Name = "Division comptabilite et Fiscalite"
+          },
+          State = eInternState.AssignedDecision
+        }
+      };
+
+      var dtos = new List<InternListItemDto>
+      {
+        new InternListItemDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          Division = "Division comptabilite et Fiscalite",
+          State = eInternState.AssignedDecision
+        }
+      };
+      Assert.Matches(dtos[0].FullName, map.Map<List<InternListItemDto>>(interns)[0].FullName);
     }
   }
 }

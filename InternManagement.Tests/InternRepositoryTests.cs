@@ -15,6 +15,29 @@ namespace InternManagement.Tests
 {
   public class InternRepositoryTests
   {
+    private InternRepository repository;
+
+    public InternRepositoryTests()
+    {
+      var config = new ConfigurationBuilder()
+      .AddUserSecrets<ConnectionConfig>()
+      .Build();
+
+      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
+      var connectionString = new MySqlConnectionStringBuilder
+      {
+        Server = connConfig.Server,
+        Database = connConfig.Database,
+        Password = connConfig.Password,
+        UserID = "InternAdmin"
+      }.ConnectionString;
+
+      var options = new DbContextOptionsBuilder<InternContext>()
+       .UseMySQL(connectionString)
+       .Options;
+      var context = new InternContext(options);
+      this.repository = new InternRepository(context);
+    }
     void RemoveInterns(InternContext context)
     {
       foreach (var id in context.Interns.Select(intern => intern.Id))
@@ -123,25 +146,6 @@ namespace InternManagement.Tests
     [Fact]
     async Task InternExistsAsync_WithInvalidId_ReturnsFalse()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
-      var repository = new InternRepository(context);
-
       var result = await repository.InternExistsAsync(3001);
       Assert.False(result);
     }
@@ -149,24 +153,6 @@ namespace InternManagement.Tests
     [Fact]
     public async Task GetInternAsync_WithProperId_ReturnsIntern()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
-      var repository = new InternRepository(context);
       var latestId = 0;
       var intern = await repository.GetInternAsync(latestId);
       Assert.NotNull(intern);
@@ -177,26 +163,33 @@ namespace InternManagement.Tests
     [Fact]
     public async Task GetInternAsync_WithInvalidId_ReturnNull()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
-      var repository = new InternRepository(context);
       var intern = await repository.GetInternAsync(3001);
       Assert.Null(intern);
+    }
+
+    [Fact]
+    public async Task GetInternsAsync_ReturnsList()
+    {
+      var count = await repository.GetInternCountAsync();
+      var interns = await repository.GetInternsAsync();
+
+      Assert.NotNull(interns);
+      if (count > 0)
+      {
+        Assert.NotEmpty(interns);
+        Assert.All(interns, intern =>
+        {
+          Assert.NotEmpty(intern.Division.Name);
+          Assert.Null(intern.Email);
+          Assert.Null(intern.Documents);
+          Assert.Equal(1, intern.StartDate.Year);
+          Assert.Equal(1, intern.EndDate.Year);
+        });
+      }
+      else
+      {
+        Assert.Empty(interns);
+      }
     }
   }
 }
