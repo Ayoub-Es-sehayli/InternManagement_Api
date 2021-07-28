@@ -23,5 +23,15 @@ namespace InternManagement.Api.Services
       dto.Id = intern.Id;
       return dto;
     }
+
+    public async Task<InternDto> GetInternByIdAsync(int id)
+    {
+      if (await _repository.InternExistsAsync(id))
+      {
+        var intern = await _repository.GetInternAsync(id);
+        return _mapper.Map<InternDto>(intern);
+      }
+      return null;
+    }
   }
 }
