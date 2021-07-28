@@ -15,6 +15,29 @@ namespace InternManagement.Tests
 {
   public class InternRepositoryTests
   {
+    private InternRepository repository;
+
+    public InternRepositoryTests()
+    {
+      var config = new ConfigurationBuilder()
+      .AddUserSecrets<ConnectionConfig>()
+      .Build();
+
+      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
+      var connectionString = new MySqlConnectionStringBuilder
+      {
+        Server = connConfig.Server,
+        Database = connConfig.Database,
+        Password = connConfig.Password,
+        UserID = "InternAdmin"
+      }.ConnectionString;
+
+      var options = new DbContextOptionsBuilder<InternContext>()
+       .UseMySQL(connectionString)
+       .Options;
+      var context = new InternContext(options);
+      this.repository = new InternRepository(context);
+    }
     void RemoveInterns(InternContext context)
     {
       foreach (var id in context.Interns.Select(intern => intern.Id))
@@ -70,7 +93,7 @@ namespace InternManagement.Tests
       var context = new InternContext(options);
       RemoveInterns(context);
       var repository = new InternRepository(context);
-
+      var oldCount = await repository.GetInternCountAsync();
       var model = new Intern
       {
         FirstName = "Mohamed",
@@ -78,6 +101,7 @@ namespace InternManagement.Tests
         Gender = eGender.Male,
         Email = "hariss@contoso.com",
         Phone = "0783848837",
+        DivisionId = 1,
 
         Documents = new()
         {
@@ -90,7 +114,82 @@ namespace InternManagement.Tests
         }
       };
       await repository.AddInternAsync(model);
-      Assert.Equal<int>(1, await repository.GetInternCountAsync());
+      Assert.NotEqual<int>(oldCount, await repository.GetInternCountAsync());
+    }
+
+    [Fact]
+    public async Task InternExistsAsync_WithProperId_ReturnsTrue()
+    {
+      var config = new ConfigurationBuilder()
+        .AddUserSecrets<ConnectionConfig>()
+        .Build();
+
+      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
+      var connectionString = new MySqlConnectionStringBuilder
+      {
+        Server = connConfig.Server,
+        Database = connConfig.Database,
+        Password = connConfig.Password,
+        UserID = "InternAdmin"
+      }.ConnectionString;
+
+      var options = new DbContextOptionsBuilder<InternContext>()
+       .UseMySQL(connectionString)
+       .Options;
+      var context = new InternContext(options);
+      var repository = new InternRepository(context);
+      var latestId = 0;
+      var result = await repository.InternExistsAsync(latestId);
+      Assert.True(result);
+    }
+
+    [Fact]
+    async Task InternExistsAsync_WithInvalidId_ReturnsFalse()
+    {
+      var result = await repository.InternExistsAsync(3001);
+      Assert.False(result);
+    }
+
+    [Fact]
+    public async Task GetInternAsync_WithProperId_ReturnsIntern()
+    {
+      var latestId = 0;
+      var intern = await repository.GetInternAsync(latestId);
+      Assert.NotNull(intern);
+      Assert.Equal<int>(latestId, intern.Id);
+      Assert.NotEmpty(intern.FirstName);
+    }
+
+    [Fact]
+    public async Task GetInternAsync_WithInvalidId_ReturnNull()
+    {
+      var intern = await repository.GetInternAsync(3001);
+      Assert.Null(intern);
+    }
+
+    [Fact]
+    public async Task GetInternsAsync_ReturnsList()
+    {
+      var count = await repository.GetInternCountAsync();
+      var interns = await repository.GetInternsAsync();
+
+      Assert.NotNull(interns);
+      if (count > 0)
+      {
+        Assert.NotEmpty(interns);
+        Assert.All(interns, intern =>
+        {
+          Assert.NotEmpty(intern.Division.Name);
+          Assert.Null(intern.Email);
+          Assert.Null(intern.Documents);
+          Assert.Equal(1, intern.StartDate.Year);
+          Assert.Equal(1, intern.EndDate.Year);
+        });
+      }
+      else
+      {
+        Assert.Empty(interns);
+      }
     }
   }
 }
