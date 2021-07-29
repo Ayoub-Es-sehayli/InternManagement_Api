@@ -10,12 +10,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker-host.sock 
       - ..:/InternManagement:cached
-      - $HOME/.microsoft/usersecrets:/home/vscode/.microsoft/usersecrets
+      - $USER_SECRET_PATH:/home/vscode/.microsoft/usersecrets
     # entrypoint: /usr/local/share/docker-init.sh
     command: sleep infinity
-    environment:
-      - DOTNET_CLI_TELEMETRY_OPTOUT=1
-      - ASPNETCORE_ENVIRONMENT=Development
+    env_file: .env
     ports:
       - '5000:5000'
       - '5001:5001'
