@@ -10,5 +10,6 @@ namespace InternManagement.Api.Models
     }
 
     public DbSet<Intern> Interns { get; set; }
+    public DbSet<User> Users { get; set; } 
   }
 }
