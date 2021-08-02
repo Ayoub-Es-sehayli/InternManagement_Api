@@ -5,6 +5,6 @@ namespace InternManagement.Api.Models
     public int Id { get; set; }
     public string Name { get; set; }
 
-    public Departement Department { get; set; }
+    public Department Department { get; set; }
   }
 }
