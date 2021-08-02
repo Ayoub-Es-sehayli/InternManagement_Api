@@ -29,5 +29,11 @@ namespace InternManagement.Api.Models
 
     [EnumDataType(typeof(eInternState))]
     public eInternState State { get; set; }
+    [EnumDataType(typeof(eFileAlarmState))]
+    public eFileAlarmState FileAlarmState { get; set; } = eFileAlarmState.None;
+
+    [EnumDataType(typeof(eAttendanceAlarmState))]
+    public eAttendanceAlarmState AttendanceAlarmState { get; set; } = eAttendanceAlarmState.None;
+    public IEnumerable<Attendance> Attendance { get; internal set; }
   }
 }

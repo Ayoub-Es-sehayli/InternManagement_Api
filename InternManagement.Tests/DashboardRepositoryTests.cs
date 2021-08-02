@@ -42,5 +42,13 @@ namespace InternManagement.Tests
       Assert.NotNull(interns);
     }
 
+
+    [Fact]
+    public async Task GetAlertInterns_ReturnsList()
+    {
+      var interns = await repository.GetAlertInternsAsync();
+
+      Assert.NotNull(interns);
+    }
   }
 }

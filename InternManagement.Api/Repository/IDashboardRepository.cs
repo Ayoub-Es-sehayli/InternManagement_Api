@@ -7,6 +7,7 @@ namespace InternManagement.Api.Repository
   public interface IDashboardRepository
   {
     Task<IEnumerable<Intern>> GetLatestInternsAsync();
+    Task<IEnumerable<Intern>> GetAlertInternsAsync();
 
   }
 }

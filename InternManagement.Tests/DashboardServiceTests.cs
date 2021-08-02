@@ -16,6 +16,56 @@ namespace InternManagement.Tests
   {
     private Mock<IDashboardRepository> repositoryStub = new();
     private Mock<IMapper> mapper = new();
+    [Fact]
+    public async Task GetAlertInternsAsync_ReturnsDtoList()
+    {
+      var models = new List<Intern>
+          {
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Mohamed",
+              LastName = "Hariss",
+             FileAlarmState = eFileAlarmState.IncompleteFile
+            },
+            new Intern
+            {
+              Id = 2,
+              FirstName = "Mohamed",
+              LastName = "Hariss",
+              AttendanceAlarmState = eAttendanceAlarmState.ExcessiveAbsence
+            }
+          };
+      var dtos = new List<AlertInternDto>
+      {
+        new AlertInternDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          Reason = "Dossier Incomplet"
+        },
+        new AlertInternDto
+        {
+          Id = 2,
+          FullName = "Mohamed Hariss",
+          Reason = "Absence Excessive"
+        },
+        new AlertInternDto
+        {
+          Id = 3,
+          FullName = "Mohamed Hariss",
+          Reason = "Dossier Incomplet | Absence Excessive"
+        }
+      };
+
+      repositoryStub.Setup(repo => repo.GetAlertInternsAsync().Result).Returns(models);
+      mapper.Setup(map => map.Map<IEnumerable<AlertInternDto>>(models)).Returns(dtos);
+      var service = new DashboardService(repositoryStub.Object, mapper.Object);
+
+      var result = await service.GetAlertInternsAsync();
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+    }
 
     [Fact]
     public async Task GetLatestInternsAsync_ReturnsDtoList()

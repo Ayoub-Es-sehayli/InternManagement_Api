@@ -24,6 +24,13 @@ namespace InternManagement.Api.Services
 
       return dtos;
     }
+    public async Task<IEnumerable<AlertInternDto>> GetAlertInternsAsync()
+    {
+      var interns = await _repository.GetAlertInternsAsync();
+      var dtos = _mapper.Map<IEnumerable<AlertInternDto>>(interns);
+
+      return dtos;
+    }
 
   }
 }
