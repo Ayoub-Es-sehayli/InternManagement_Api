@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using InternManagement.Api.Dtos;
+using InternManagement.Api.Enums;
+using InternManagement.Api.Models;
+using InternManagement.Api.Repository;
+using InternManagement.Api.Services;
+using Moq;
+using Xunit;
+
+namespace InternManagement.Tests
+{
+  public class DashboardServiceTests
+  {
+    private Mock<IDashboardRepository> repositoryStub = new();
+    private Mock<IMapper> mapper = new();
+
+    [Fact]
+    public async Task GetLatestInternsAsync_ReturnsDtoList()
+    {
+      var models = new List<Intern>
+          {
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Mohamed",
+              LastName = "Hariss",
+              StartDate = new DateTime(2021, 9, 2)
+            },
+            new Intern
+            {
+              Id = 2,
+              FirstName = "Abir",
+              LastName = "Othmani",
+              StartDate = new DateTime(2021, 12, 1)
+            }
+          };
+      var dtos = new List<LatestInternDto>
+      {
+        new LatestInternDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          StartDate = new DateTime(2021, 9, 2)
+        },
+        new LatestInternDto
+        {
+          Id = 2,
+          FullName = "Abir Othmani",
+          StartDate = new DateTime(2021, 9, 2)
+        }
+      };
+
+      repositoryStub.Setup(repo => repo.GetLatestInternsAsync().Result).Returns(models);
+      mapper.Setup(map => map.Map<IEnumerable<LatestInternDto>>(models)).Returns(dtos);
+      var service = new DashboardService(repositoryStub.Object, mapper.Object);
+
+      var result = await service.GetLatestInternsAsync();
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+    }
+
+  }
+}
