@@ -111,6 +111,63 @@ namespace InternManagement.Tests
       Assert.NotNull(result);
       Assert.NotEmpty(result);
     }
+    [Fact]
+    public async Task GetFinishingInternsAsync_ReturnsDtoList()
+    {
+      var models = new List<Intern>
+          {
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Mohamed",
+              LastName = "Hariss",
+              EndDate = new DateTime(2021, 8, 6),
+            },
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Karim",
+              LastName = "Morabit",
+              EndDate = new DateTime(2021, 8, 6),
+            },
+            new Intern
+            {
+              Id = 2,
+              FirstName = "Abir",
+              LastName = "Othmani",
+              EndDate = new DateTime(2021, 8, 5),
+            }
+          };
+      var dtos = new List<FinishingInternDto>
+      {
+        new FinishingInternDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          DaysToFinish = 5
+        },
+        new FinishingInternDto
+        {
+          Id = 1,
+          FullName = "Karim Morabit",
+          DaysToFinish = 5
+        },
+        new FinishingInternDto
+        {
+          Id = 2,
+          FullName = "Abir Othmani",
+          DaysToFinish = 4
+        }
+      };
+
+      repositoryStub.Setup(repo => repo.GetFinishingInternsAsync().Result).Returns(models);
+      mapper.Setup(map => map.Map<IEnumerable<FinishingInternDto>>(models)).Returns(dtos);
+      var service = new DashboardService(repositoryStub.Object, mapper.Object);
+
+      var result = await service.GetFinishingInternsAsync();
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+    }
 
   }
 }

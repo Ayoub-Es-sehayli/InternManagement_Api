@@ -41,6 +41,14 @@ namespace InternManagement.Api.Profiles
           dto => dto.FullName,
           opt => opt.MapFrom(intern => intern.FirstName + " " + intern.LastName));
 
+      CreateMap<Intern, FinishingInternDto>()
+        .ForMember(
+          dto => dto.FullName,
+          opt => opt.MapFrom(intern => intern.FirstName + " " + intern.LastName))
+        .ForMember(
+          dto => dto.DaysToFinish,
+          opt => opt.MapFrom(intern => (intern.EndDate - DateTime.Now).TotalDays)
+        );
     }
   }
 }

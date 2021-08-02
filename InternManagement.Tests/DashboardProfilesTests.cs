@@ -115,6 +115,67 @@ namespace InternManagement.Tests
       }
     }
 
+    [Fact]
+    public void MapFinishingInternDto_ReturnsDto()
+    {
+      var config = new MapperConfiguration(cfg =>
+      {
+        cfg.AddProfile<DashboardProfile>();
+      });
+      var mapper = config.CreateMapper();
 
+      var models = new List<Intern>
+          {
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Mohamed",
+              LastName = "Hariss",
+              EndDate = new DateTime(2021, 8, 6),
+            },
+            new Intern
+            {
+              Id = 1,
+              FirstName = "Karim",
+              LastName = "Morabit",
+              EndDate = new DateTime(2021, 8, 6),
+            },
+            new Intern
+            {
+              Id = 2,
+              FirstName = "Abir",
+              LastName = "Othmani",
+              EndDate = new DateTime(2021, 8, 5),
+            }
+          };
+      var dtos = new List<FinishingInternDto>
+      {
+        new FinishingInternDto
+        {
+          Id = 1,
+          FullName = "Mohamed Hariss",
+          DaysToFinish = 4
+        },
+        new FinishingInternDto
+        {
+          Id = 1,
+          FullName = "Karim Morabit",
+          DaysToFinish = 4
+        },
+        new FinishingInternDto
+        {
+          Id = 2,
+          FullName = "Abir Othmani",
+          DaysToFinish = 3
+        }
+      };
+      var results = mapper.Map<List<FinishingInternDto>>(models);
+
+      for (int i = 0; i < results.Count; i++)
+      {
+        Assert.Matches(dtos[i].FullName, results[i].FullName);
+        Assert.Equal<int>(dtos[i].DaysToFinish, results[i].DaysToFinish);
+      }
+    }
   }
 }

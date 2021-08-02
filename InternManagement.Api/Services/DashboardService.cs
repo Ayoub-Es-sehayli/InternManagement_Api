@@ -32,5 +32,12 @@ namespace InternManagement.Api.Services
       return dtos;
     }
 
+    public async Task<IEnumerable<FinishingInternDto>> GetFinishingInternsAsync()
+    {
+      var interns = await _repository.GetFinishingInternsAsync();
+      var dtos = _mapper.Map<IEnumerable<FinishingInternDto>>(interns);
+
+      return dtos;
+    }
   }
 }

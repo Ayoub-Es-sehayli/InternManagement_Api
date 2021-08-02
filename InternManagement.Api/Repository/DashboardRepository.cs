@@ -37,6 +37,28 @@ namespace InternManagement.Api.Repository
       return (await this.GetInternsWithExceciveAbsence()).Concat(await this.GetInternsWithIncompleteFiles());
     }
 
+    public async Task<IEnumerable<Intern>> GetFinishingInternsAsync()
+    {
+      var limitDate = DateTime.Now.AddDays(7);
+
+      var query = _context.Interns.Select(intern => new Intern
+      {
+        Id = intern.Id,
+        FirstName = intern.FirstName,
+        LastName = intern.LastName,
+        EndDate = intern.EndDate,
+        State = intern.State
+      }).Where(intern =>
+      intern.State != eInternState.Cancelled
+      && intern.State != eInternState.FileClosed
+      && intern.State != eInternState.ApplicationFilled
+      && intern.EndDate >= DateTime.Now
+      && intern.EndDate <= limitDate)
+      .OrderBy(intern => intern.EndDate);
+
+      return await query.Take(5).ToListAsync();
+    }
+
     public async Task<IEnumerable<Intern>> GetInternsWithIncompleteFiles()
     {
       var query = _context.Interns.Where(

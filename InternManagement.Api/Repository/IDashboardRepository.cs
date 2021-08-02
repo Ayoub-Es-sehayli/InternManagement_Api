@@ -8,6 +8,7 @@ namespace InternManagement.Api.Repository
   {
     Task<IEnumerable<Intern>> GetLatestInternsAsync();
     Task<IEnumerable<Intern>> GetAlertInternsAsync();
+    Task<IEnumerable<Intern>> GetFinishingInternsAsync();
 
   }
 }
