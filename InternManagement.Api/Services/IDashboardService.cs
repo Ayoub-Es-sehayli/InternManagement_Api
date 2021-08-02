@@ -9,5 +9,6 @@ namespace InternManagement.Api.Services
     Task<IEnumerable<LatestInternDto>> GetLatestInternsAsync();
     Task<IEnumerable<FinishingInternDto>> GetFinishingInternsAsync();
     Task<IEnumerable<AlertInternDto>> GetAlertInternsAsync();
+    Task<GeneralStatsDto> GetStatsAsync();
   }
 }

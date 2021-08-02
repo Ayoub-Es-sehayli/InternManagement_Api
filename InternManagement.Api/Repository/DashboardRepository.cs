@@ -96,5 +96,52 @@ namespace InternManagement.Api.Repository
 
       return await query.Take(5).ToListAsync();
     }
+
+    public async Task<int> GetAbsenteeCountAsync()
+    {
+      var yesterday = DateTime.Today.AddDays(-1);
+      var query = _context.Attendance
+        .Where(attendance => attendance.dateTime == yesterday
+          && attendance.Type == eAttendanceType.Absent);
+
+      return await query.CountAsync();
+    }
+
+    public async Task<int> GetReadyToFinishCountAsync()
+    {
+      var query = _context.Interns.Include(intern => intern.Documents)
+      .Select(intern => new Intern
+      {
+        Id = intern.Id,
+        EndDate = intern.EndDate,
+        State = intern.State,
+        Documents = intern.Documents
+      })
+      .Where(intern =>
+      intern.State == eInternState.Started
+      && intern.Documents.CV == eDocumentState.Submitted
+      && intern.Documents.Insurance == eDocumentState.Submitted
+      && intern.Documents.Letter == eDocumentState.Submitted
+      && intern.Documents.EvaluationForm == eDocumentState.Submitted
+      && intern.Documents.Report == eDocumentState.Valid
+      && intern.EndDate >= DateTime.Today
+      );
+
+      return await query.CountAsync();
+    }
+
+    public async Task<int> GetActiveInternsCountAsync()
+    {
+      var query = _context.Interns.Select(intern => new Intern
+      {
+        Id = intern.Id,
+        State = intern.State
+      }).Where(intern =>
+      intern.State != eInternState.Finished
+      && intern.State != eInternState.FileClosed
+      && intern.State != eInternState.Cancelled);
+
+      return await query.CountAsync();
+    }
   }
 }

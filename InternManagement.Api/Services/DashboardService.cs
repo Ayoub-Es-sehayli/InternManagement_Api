@@ -39,5 +39,16 @@ namespace InternManagement.Api.Services
 
       return dtos;
     }
+
+    public async Task<GeneralStatsDto> GetStatsAsync()
+    {
+      var stats = new GeneralStatsDto
+      {
+        Absentees = await _repository.GetAbsenteeCountAsync(),
+        ReadyToFinish = await _repository.GetReadyToFinishCountAsync(),
+        Total = await _repository.GetActiveInternsCountAsync()
+      };
+      return stats;
+    }
   }
 }

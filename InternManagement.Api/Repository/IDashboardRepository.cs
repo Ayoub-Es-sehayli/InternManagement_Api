@@ -10,5 +10,8 @@ namespace InternManagement.Api.Repository
     Task<IEnumerable<Intern>> GetAlertInternsAsync();
     Task<IEnumerable<Intern>> GetFinishingInternsAsync();
 
+    Task<int> GetAbsenteeCountAsync();
+    Task<int> GetReadyToFinishCountAsync();
+    Task<int> GetActiveInternsCountAsync();
   }
 }

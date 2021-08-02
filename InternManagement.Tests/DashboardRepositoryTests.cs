@@ -42,6 +42,29 @@ namespace InternManagement.Tests
       Assert.NotNull(interns);
     }
 
+    [Fact]
+    public async Task GetAbsenteeCountAsync_ReturnsInt()
+    {
+      var count = await repository.GetAbsenteeCountAsync();
+
+      Assert.NotNull(count);
+    }
+
+    [Fact]
+    public async Task GetReadyToFinishCountAsync_ReturnsInt()
+    {
+      var count = await repository.GetReadyToFinishCountAsync();
+
+      Assert.NotNull(count);
+    }
+
+    [Fact]
+    public async Task GetActiveInternsCountAsync_ReturnsInt()
+    {
+      var count = await repository.GetActiveInternsCountAsync();
+
+      Assert.NotNull(count);
+    }
 
     [Fact]
     public async Task GetAlertInterns_ReturnsList()

@@ -168,6 +168,29 @@ namespace InternManagement.Tests
       Assert.NotNull(result);
       Assert.NotEmpty(result);
     }
+    [Fact]
+    public async Task GetStatsAsync_ReturnsDto()
+    {
+      int absentees = 0;
+      int readyToFinish = 0;
+      int total = 0;
+      repositoryStub.Setup(repo => repo.GetAbsenteeCountAsync().Result).Returns(absentees);
+      repositoryStub.Setup(repo => repo.GetReadyToFinishCountAsync().Result).Returns(readyToFinish);
+      repositoryStub.Setup(repo => repo.GetActiveInternsCountAsync().Result).Returns(total);
 
+      var generalStats = new GeneralStatsDto
+      {
+        Absentees = absentees,
+        ReadyToFinish = readyToFinish,
+        Total = total
+      };
+
+      var service = new DashboardService(repositoryStub.Object, mapper.Object);
+      var result = await service.GetStatsAsync();
+
+      Assert.Equal<int>(generalStats.Absentees, result.Absentees);
+      Assert.Equal<int>(generalStats.ReadyToFinish, result.ReadyToFinish);
+      Assert.Equal<int>(generalStats.Total, result.Total);
+    }
   }
 }
