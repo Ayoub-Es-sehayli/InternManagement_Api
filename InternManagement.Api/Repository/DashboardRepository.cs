@@ -12,9 +12,9 @@ namespace InternManagement.Api.Repository
   {
     private readonly InternContext _context;
 
-    public DashboardRepository(DbContext context)
+    public DashboardRepository(InternContext context)
     {
-      this._context = (InternContext)context;
+      this._context = context;
     }
 
     public async Task<IEnumerable<Intern>> GetLatestInternsAsync()
