@@ -22,6 +22,8 @@ namespace InternManagement.Api.Repository
       var query = _context.Interns.Select(intern => new Intern
       {
         Id = intern.Id,
+        FirstName = intern.FirstName,
+        LastName = intern.LastName,
         State = intern.State,
         StartDate = intern.StartDate
       }).Where(intern =>
