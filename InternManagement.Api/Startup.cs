@@ -1,4 +1,7 @@
 using InternManagement.Api.Models;
+using InternManagement.Api.Profiles;
+using InternManagement.Api.Repository;
+using InternManagement.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +48,7 @@ namespace InternManagement.Api
 
       #region Repository Registration
       services.AddScoped<IInternRepository, InternRepository>();
+      services.AddScoped<IDashboardRepository, DashboardRepository>();
       #endregion
 
       services.AddAutoMapper(cfg =>
@@ -55,7 +59,7 @@ namespace InternManagement.Api
       });
 
       #region Service Registration
-      services.AddScoped<IInternService, InternService>();
+      services.AddScoped<IDashboardService, DashboardService>();
       #endregion
     }
 
