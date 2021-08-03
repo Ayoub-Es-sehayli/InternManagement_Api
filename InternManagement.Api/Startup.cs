@@ -28,6 +28,7 @@ namespace InternManagement.Api
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "InternManagement.Api", Version = "v1" });
       });
 
+      #region DbContext
       var config = Configuration.GetSection("MysqlConnection").Get<ConnectionConfig>();
       var connectionString = new MySqlConnectionStringBuilder
       {
@@ -40,6 +41,22 @@ namespace InternManagement.Api
       {
         options.UseMySQL(connectionString);
       });
+      #endregion
+
+      #region Repository Registration
+      services.AddScoped<IInternRepository, InternRepository>();
+      #endregion
+
+      services.AddAutoMapper(cfg =>
+      {
+        cfg.AddProfile<InternProfile>();
+        cfg.AddProfile<DocumentsProfile>();
+        cfg.AddProfile<DashboardProfile>();
+      });
+
+      #region Service Registration
+      services.AddScoped<IInternService, InternService>();
+      #endregion
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

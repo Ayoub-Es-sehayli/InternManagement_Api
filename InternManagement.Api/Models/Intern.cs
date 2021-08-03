@@ -8,7 +8,6 @@ namespace InternManagement.Api.Models
 {
   public class Intern
   {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -35,6 +34,6 @@ namespace InternManagement.Api.Models
 
     [EnumDataType(typeof(eAttendanceAlarmState))]
     public eAttendanceAlarmState AttendanceAlarmState { get; set; } = eAttendanceAlarmState.None;
-    public IEnumerable<Attendance> Attendance { get; internal set; }
+    public IList<Attendance> Attendance { get; set; }
   }
 }
