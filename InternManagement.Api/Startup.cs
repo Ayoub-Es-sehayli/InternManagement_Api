@@ -1,4 +1,8 @@
+using InternManagement.Api.Helpers;
 using InternManagement.Api.Models;
+using InternManagement.Api.Profiles;
+using InternManagement.Api.Repository;
+using InternManagement.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,58 +14,70 @@ using MySql.Data.MySqlClient;
 
 namespace InternManagement.Api
 {
-  public class Startup
-  {
-    public Startup(IConfiguration configuration)
+    public class Startup
     {
-      Configuration = configuration;
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddCors();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "InternManagement.Api", Version = "v1" });
+            });
+
+
+            var config = Configuration.GetSection("MysqlConnection").Get<ConnectionConfig>();
+            var connectionString = new MySqlConnectionStringBuilder
+            {
+                Server = config.Server,
+                Database = config.Database,
+                Password = config.Password,
+                UserID = "InternAdmin"
+            }.ConnectionString;
+            services.AddDbContext<InternContext>(options =>
+            {
+                options.UseMySQL(connectionString);
+            });
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<UserProfile>();
+            });
+            services.AddScoped<IUserService, UserService>();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InternManagement.Api v1"));
+            }
+
+
+            app.UseRouting();
+
+            app.UseCors();
+
+            app.UseMiddleware<JwtMiddleware>();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
     }
-
-    public IConfiguration Configuration { get; }
-
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddControllers();
-      services.AddSwaggerGen(c =>
-      {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "InternManagement.Api", Version = "v1" });
-      });
-
-      var config = Configuration.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = config.Server,
-        Database = config.Database,
-        Password = config.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-      services.AddDbContext<InternContext>(options =>
-      {
-        options.UseMySQL(connectionString);
-      });
-    }
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InternManagement.Api v1"));
-      }
-
-      app.UseHttpsRedirection();
-
-      app.UseRouting();
-
-      app.UseAuthorization();
-
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.MapControllers();
-      });
-    }
-  }
 }
