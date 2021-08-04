@@ -16,11 +16,8 @@ namespace InternManagement.Tests
             {
                 FirstName = default,
                 LastName = default,
-                EmailAddress = default,
-                Roles = new()
-                {
-                    eUserRole.Supervisor,
-                },
+                Email = default,
+                Role = eUserRole.Supervisor,
                 Password = default
             };
 
