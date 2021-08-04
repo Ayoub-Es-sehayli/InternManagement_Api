@@ -9,6 +9,8 @@ namespace InternManagement.Api.Profiles
         public UserProfile(){
             CreateMap<UserDto, User>();
             CreateMap<User, UserDto>();
+            CreateMap<User, UserListDto>()
+                .ForMember(UserListDto => UserListDto.FullName, opt => opt.MapFrom(user => user.FirstName + " " + user.LastName));
         }
     }
 }

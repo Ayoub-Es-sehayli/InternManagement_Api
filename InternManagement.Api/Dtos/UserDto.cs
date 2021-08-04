@@ -6,29 +6,25 @@ using InternManagement.Api.Models;
 
 namespace InternManagement.Api.Dtos
 {
-    public class UserRolesAttribute :ValidationAttribute {
-        protected override ValidationResult IsValid(object Roles, ValidationContext context)
+    public class UserRolesAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object Role, ValidationContext context)
         {
-            var roleList = Roles as List<eUserRole>;
-            var roleCount = 2;
-            if (roleCount == roleList.Count)
+            var role = (eUserRole)Role;
+            if (role == eUserRole.Admin || role == eUserRole.Supervisor)
             {
-                if ( roleList[0] == eUserRole.Admin || roleList[1] == eUserRole.Supervisor )
-                {
-                    return ValidationResult.Success;
-                }
-                else{
-                    return new ValidationResult("Role Required to proceed Missing!");
-                }
-
+                return ValidationResult.Success;
             }
-            return new ValidationResult("Role Required");
+            else
+            {
+                return new ValidationResult("Role Required to proceed Missing!");
+            }
         }
     }
     public class UserDto
     {
 
-        public string FirstName { get; set; }
+        
         [Required]
         [MinLength(3)]
         [DataType(DataType.Text)]
@@ -36,17 +32,20 @@ namespace InternManagement.Api.Dtos
         [Required]
         [MinLength(3)]
         [DataType(DataType.Text)]
-        public string EmailAddress { get; set; }
+        public string FirstName { get; set; }
         [Required]
         [MinLength(10)]
         [DataType(DataType.EmailAddress)]
-        public string Password { get; set; }
+        public string Email { get; set; }
         [Required]
         [MinLength(6)]
         [DataType(DataType.Password)]
+        public string Password { get; set; }
 
         [UserRolesAttribute]
-        public List<eUserRole> Roles { get; set; }
+        [Required]
+        [EnumDataType(typeof(eUserRole))]
+        public eUserRole Role { get; set; }
 
 
     }
