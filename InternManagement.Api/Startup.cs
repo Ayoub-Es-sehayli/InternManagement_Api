@@ -49,6 +49,7 @@ namespace InternManagement.Api
       #region Repository Registration
       services.AddScoped<IInternRepository, InternRepository>();
       services.AddScoped<IDashboardRepository, DashboardRepository>();
+      services.AddScoped<IPunchInRepository, PunchInRepository>();
       #endregion
 
       services.AddAutoMapper(cfg =>
@@ -56,10 +57,13 @@ namespace InternManagement.Api
         cfg.AddProfile<InternProfile>();
         cfg.AddProfile<DocumentsProfile>();
         cfg.AddProfile<DashboardProfile>();
+        cfg.AddProfile<PunchInProfile>();
       });
 
       #region Service Registration
+      services.AddScoped<IInternService, InternService>();
       services.AddScoped<IDashboardService, DashboardService>();
+      services.AddScoped<IPunchInService, PunchInService>();
       #endregion
     }
 
@@ -72,8 +76,6 @@ namespace InternManagement.Api
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InternManagement.Api v1"));
       }
-
-      app.UseHttpsRedirection();
 
       app.UseRouting();
 
