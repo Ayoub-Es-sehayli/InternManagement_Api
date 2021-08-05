@@ -98,7 +98,7 @@ namespace InternManagement.Tests
                 Gender = eGender.Male,
                 Email = "hariss@contoso.com",
                 Phone = "0783848837",
-
+                DivisionId = 1,
                 Documents = new()
                 {
                     CV = eDocumentState.Submitted,
