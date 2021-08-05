@@ -11,5 +11,8 @@ namespace InternManagement.Api.Models
 
     public DbSet<Intern> Interns { get; set; }
     public DbSet<Attendance> Attendance { get; internal set; }
+
+    public DbSet<Department> Departments { get; set; }
+    public DbSet<Division> Divisions { get; set; }
   }
 }
