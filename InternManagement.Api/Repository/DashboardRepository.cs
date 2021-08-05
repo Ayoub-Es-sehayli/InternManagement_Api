@@ -72,7 +72,8 @@ namespace InternManagement.Api.Repository
         Id = intern.Id,
         FirstName = intern.FirstName,
         LastName = intern.LastName,
-        FileAlarmState = eFileAlarmState.IncompleteFile
+        FileAlarmState = intern.FileAlarmState,
+        State = intern.State
       }).Where(intern =>
       intern.State != eInternState.FileClosed
       && intern.State != eInternState.Cancelled
