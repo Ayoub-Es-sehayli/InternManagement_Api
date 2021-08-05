@@ -1,0 +1,24 @@
+doctype html
+html 
+   body
+      -const texteStyles = { "padding": "50px", "margin": "auto"}
+      div(style = texteStyles )
+         -const dateStyle = { "text-align": "right"}
+         div(style = dateStyle)
+            p Rabat, Le #{currentDate}
+         p SAO RSK/DOCH/DtRH #{attestationCode}/#{currentYear}
+         -const titleStyles1 = {"text-align": "center"}
+         div(style = titleStyles1)
+            h4  <u> ATTESTATION DE STAGE </u>
+
+         .paragraph1
+            p Le Directeur Général d’Al Omrane Rabat – Salé – Kénitra.
+
+         -const titleStyles2  = {"text-align": "center"}
+         div(style = titleStyles2 )
+            h4  <u> - ATTESTE -</u>
+
+         .paragraph2
+            p Que Mademoiselle #{fullname} a effectué un stage non rémunéré au sein d’Al Omrane Rabat-Salé-Kénitra, et ce du #{startDate} au #{endDate}.
+            p La présente attestation est délivrée  à la demande de l’intéressée pour usage administratif.
+          
