@@ -8,5 +8,7 @@ namespace InternManagement.Api.Repository{
         Task<User> UserExistsAsync(string username, string password);
         Task<User> FirstOrDefaultAsync(int id);
         Task<IEnumerable<User>> GetUsersAsync();
+        Task<User> GetUserByIdAsync(int id);
+        Task<User> DeleteUserAsync(int id);
     }
 }

@@ -33,5 +33,11 @@ namespace InternManagement.Api.Controllers
             }
             return Ok(result);
         }
+        [HttpDelete]
+        //[Route("{id}")]
+        public async void DeleteUser(int id)
+        {
+            var result = await _service.DeleteUserAsync(id);
+        }
     }
 }
