@@ -103,7 +103,7 @@ namespace InternManagement.Api.Repository
     {
       var yesterday = DateTime.Today.AddDays(-1);
       var query = _context.Attendance
-        .Where(attendance => attendance.dateTime == yesterday
+        .Where(attendance => attendance.date == yesterday
           && attendance.Type == eAttendanceType.Absent);
 
       return await query.CountAsync();

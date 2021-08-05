@@ -131,21 +131,21 @@ namespace InternManagement.Tests
               Id = 1,
               FirstName = "Mohamed",
               LastName = "Hariss",
-              EndDate = new DateTime(2021, 8, 6),
+              EndDate = DateTime.Today.AddDays(5),
             },
             new Intern
             {
               Id = 1,
               FirstName = "Karim",
               LastName = "Morabit",
-              EndDate = new DateTime(2021, 8, 6),
+              EndDate = DateTime.Today.AddDays(3),
             },
             new Intern
             {
               Id = 2,
               FirstName = "Abir",
               LastName = "Othmani",
-              EndDate = new DateTime(2021, 8, 5),
+              EndDate = DateTime.Today.AddDays(4),
             }
           };
       var dtos = new List<FinishingInternDto>
@@ -154,19 +154,19 @@ namespace InternManagement.Tests
         {
           Id = 1,
           FullName = "Mohamed Hariss",
-          DaysToFinish = 4
+          DaysToFinish = 5
         },
         new FinishingInternDto
         {
           Id = 1,
           FullName = "Karim Morabit",
-          DaysToFinish = 4
+          DaysToFinish = 3
         },
         new FinishingInternDto
         {
           Id = 2,
           FullName = "Abir Othmani",
-          DaysToFinish = 3
+          DaysToFinish = 4
         }
       };
       var results = mapper.Map<List<FinishingInternDto>>(models);
