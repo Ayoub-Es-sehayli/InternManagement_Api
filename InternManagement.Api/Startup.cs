@@ -52,6 +52,7 @@ namespace InternManagement.Api
       services.AddScoped<IInternRepository, InternRepository>();
       services.AddScoped<IDashboardRepository, DashboardRepository>();
       services.AddScoped<IPunchInRepository, PunchInRepository>();
+      services.AddScoped<IUiRepository, UiRepository>();
       #endregion
 
       services.AddAutoMapper(cfg =>
@@ -60,12 +61,14 @@ namespace InternManagement.Api
         cfg.AddProfile<DocumentsProfile>();
         cfg.AddProfile<DashboardProfile>();
         cfg.AddProfile<PunchInProfile>();
+        cfg.AddProfile<UiProfile>();
       });
 
       #region Service Registration
       services.AddScoped<IInternService, InternService>();
       services.AddScoped<IDashboardService, DashboardService>();
       services.AddScoped<IPunchInService, PunchInService>();
+      services.AddScoped<IUiService, UiService>();
       #endregion
     }
 
