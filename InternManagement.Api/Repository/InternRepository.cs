@@ -11,9 +11,9 @@ namespace InternManagement.Api.Repository
   {
     private readonly InternContext _context;
 
-    public InternRepository(DbContext context)
+    public InternRepository(InternContext context)
     {
-      _context = (InternContext)context;
+      _context = context;
     }
     public async Task<Intern> AddInternAsync(Intern model)
     {

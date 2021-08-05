@@ -7,7 +7,6 @@ namespace InternManagement.Api.Enums
     Started,
     Finished,
     FileClosed,
-    IncompleteFile,
     Cancelled
   }
 }
