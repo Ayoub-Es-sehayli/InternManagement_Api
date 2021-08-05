@@ -19,23 +19,7 @@ namespace InternManagement.Tests
 
     public InternRepositoryTests()
     {
-      var config = new ConfigurationBuilder()
-      .AddUserSecrets<ConnectionConfig>()
-      .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
+      var context = new MockDbSeed("InternDB").context;
       this.repository = new InternRepository(context);
     }
     void RemoveInterns(InternContext context)
@@ -66,33 +50,14 @@ namespace InternManagement.Tests
        .UseMySQL(connBuilder.ConnectionString)
        .Options;
       var context = new InternContext(options);
-      RemoveInterns(context);
+      // RemoveInterns(context);
       var count = await context.Interns.CountAsync();
-      Assert.Equal<int>(0, count);
+      Assert.NotNull(count);
     }
 
     [Fact]
     public async Task AddInternAsync_WithProperData_ReturnsAddedObject()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
-      RemoveInterns(context);
-      var repository = new InternRepository(context);
       var oldCount = await repository.GetInternCountAsync();
       var model = new Intern
       {
@@ -120,25 +85,7 @@ namespace InternManagement.Tests
     [Fact]
     public async Task InternExistsAsync_WithProperId_ReturnsTrue()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
-      var repository = new InternRepository(context);
-      var latestId = 0;
+      var latestId = 4;
       var result = await repository.InternExistsAsync(latestId);
       Assert.True(result);
     }
@@ -153,7 +100,7 @@ namespace InternManagement.Tests
     [Fact]
     public async Task GetInternAsync_WithProperId_ReturnsIntern()
     {
-      var latestId = 0;
+      var latestId = 4;
       var intern = await repository.GetInternAsync(latestId);
       Assert.NotNull(intern);
       Assert.Equal<int>(latestId, intern.Id);

@@ -72,7 +72,7 @@ namespace InternManagement.Tests
 
       Assert.False(isValid);
       Assert.NotEmpty(validationResults);
-      Assert.Equal<int>(1, validationResults.Count);
+      Assert.Equal(1, validationResults.Count);
     }
   }
 }

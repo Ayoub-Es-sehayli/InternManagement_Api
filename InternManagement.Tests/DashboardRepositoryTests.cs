@@ -15,23 +15,7 @@ namespace InternManagement.Tests
 
     public DashboardRepositoryTests()
     {
-      var config = new ConfigurationBuilder()
-        .AddUserSecrets<ConnectionConfig>()
-        .Build();
-
-      var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-      var connectionString = new MySqlConnectionStringBuilder
-      {
-        Server = connConfig.Server,
-        Database = connConfig.Database,
-        Password = connConfig.Password,
-        UserID = "InternAdmin"
-      }.ConnectionString;
-
-      var options = new DbContextOptionsBuilder<InternContext>()
-       .UseMySQL(connectionString)
-       .Options;
-      var context = new InternContext(options);
+      var context = new MockDbSeed("dashboardDB").context;
       this.repository = new DashboardRepository(context);
     }
     [Fact]
