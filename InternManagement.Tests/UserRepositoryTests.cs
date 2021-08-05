@@ -55,5 +55,11 @@ namespace InternManagement.Tests
             Assert.NotNull(result);
             Assert.NotEqual<int>(oldCount, await repository.GetUserCountAsync());
         }
+        [Fact]
+        public async Task DeleteUserAsync_ProperData()
+        {
+            var result = await repository.DeleteUserAsync(21);
+            Assert.NotNull(result);
+        }
     }
 }

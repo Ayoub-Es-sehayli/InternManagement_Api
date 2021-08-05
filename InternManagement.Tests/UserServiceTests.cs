@@ -8,7 +8,6 @@ using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
 using InternManagement.Api.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -94,7 +93,32 @@ namespace InternManagement.Tests
 
             Assert.NotNull(result);
             Assert.NotEmpty(result);
+        }
+        [Fact]
+        public async Task DeleteUserAsync_ProperData()
+        {
+            var user = new User{
+                    Id= 5,
+                    LastName = "Tazi",
+                    FirstName = "Ahmed",
+                    Email = "ahmed.tazi@gmail.com",
+                    Role = eUserRole.Supervisor,
+                    Password = "00000000000000"
+                };
+            userRepositoryStub.Setup(repo => repo.DeleteUserAsync(user.Id).Result).Returns(user);
+            mapper.Setup(map => map.Map<User>(user)).Returns(user);
+            var confSection = new Mock<IConfigurationSection>();
+            var jwtConfig = new JwtConfig
+            {
+                Salt = "Omrane"
+            };
 
+            configStub.Setup(config => config.GetSection("JwtKey")).Returns(confSection.Object);
+
+            var service = new UserService(userRepositoryStub.Object, mapper.Object, configStub.Object);
+            var result = await service.DeleteUserAsync(user.Id);
+
+            Assert.NotNull(result);
         }
     }
 }
