@@ -7,29 +7,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InternManagement.Tests
 {
-  public class MockDbSeed
-  {
-    public InternContext context { get; internal set; }
-    private static bool initialized = false;
-
-    public MockDbSeed(string DbName)
+    public class MockDbSeed
     {
-      var options = new DbContextOptionsBuilder<InternContext>()
-        .UseInMemoryDatabase(DbName)
-        .Options;
+        public InternContext context { get; internal set; }
+        private static bool initialized = false;
 
-      this.context = new InternContext(options);
-      if (!initialized)
-      {
-        LoadDepartment();
-        LoadInterns();
-        initialized = true;
-      }
-    }
+        public MockDbSeed(string DbName)
+        {
+            var options = new DbContextOptionsBuilder<InternContext>()
+              .UseInMemoryDatabase(DbName)
+              .Options;
 
-    private void LoadDepartment()
-    {
-      var departments = new List<Department>
+            this.context = new InternContext(options);
+            if (!initialized)
+            {
+                LoadDepartment();
+                LoadInterns();
+                initialized = true;
+            }
+        }
+
+        private void LoadDepartment()
+        {
+            var departments = new List<Department>
       {
         new Department { Id = 1, Name = "Direction Generale" },
         new Department { Id = 2, Name = "Charge de missions partenaires" },
@@ -42,9 +42,9 @@ namespace InternManagement.Tests
         new Department { Id = 9, Name = "Direction financiere et contrôle de gestion" }
       };
 
-      context.Departments.AddRange(departments);
-      context.SaveChanges();
-      var divisions = new List<Division>
+            context.Departments.AddRange(departments);
+            context.SaveChanges();
+            var divisions = new List<Division>
       {
         new Division { Id = 1, Name = "Direction Generale", DepartmentId = 1 },
         new Division { Id = 2, Name = "Charge de missions partenaires", DepartmentId = 2 },
@@ -76,44 +76,44 @@ namespace InternManagement.Tests
         new Division { Id = 28, Name = "Division comptabilite et Fiscalite", DepartmentId = 9 },
         new Division { Id = 29, Name = "Departement contrôle de gestion", DepartmentId = 9 }
       };
-      context.Divisions.AddRange(divisions);
-      context.SaveChanges();
-    }
+            context.Divisions.AddRange(divisions);
+            context.SaveChanges();
+        }
 
-    private void LoadInterns()
-    {
-      var today = DateTime.Today;
-      var currentTime = new DateTime(2021, 8, 4, 8, 45, 00);
-
-
-      var interns = new List<Intern>();
-      for (int i = 1; i < 100; i++)
-      {
-        interns.Add(new Intern
+        private void LoadInterns()
         {
-          Id = i,
-          FirstName = "Mohamed",
-          LastName = "Hariss",
-          Email = "mohamed.hariss@gmail.com",
-          Phone = "0684257139",
-          AttendanceAlarmState = eAttendanceAlarmState.None,
-          FileAlarmState = eFileAlarmState.None,
-          DivisionId = 25,
-          Gender = eGender.Male,
-          StartDate = DateTime.Today,
-          EndDate = DateTime.Today.AddMonths(2),
-          State = eInternState.Started,
-          Documents = new Documents
-          {
-            Id = i,
-            CV = eDocumentState.Submitted,
-            Letter = eDocumentState.Submitted,
-            Insurance = eDocumentState.Submitted,
-            Convention = eDocumentState.Submitted,
-            Report = eDocumentState.Invalid,
-            EvaluationForm = eDocumentState.Missing
-          },
-          Attendance = new List<Attendance>
+            var today = DateTime.Today;
+            var currentTime = new DateTime(2021, 8, 4, 8, 45, 00);
+
+
+            var interns = new List<Intern>();
+            for (int i = 1; i < 100; i++)
+            {
+                interns.Add(new Intern
+                {
+                    Id = i,
+                    FirstName = "Mohamed",
+                    LastName = "Hariss",
+                    Email = "mohamed.hariss@gmail.com",
+                    Phone = "0684257139",
+                    AttendanceAlarmState = eAttendanceAlarmState.None,
+                    FileAlarmState = eFileAlarmState.None,
+                    DivisionId = 25,
+                    Gender = eGender.Male,
+                    StartDate = DateTime.Today,
+                    EndDate = DateTime.Today.AddMonths(2),
+                    State = eInternState.Started,
+                    Documents = new Documents
+                    {
+                        Id = i,
+                        CV = eDocumentState.Submitted,
+                        Letter = eDocumentState.Submitted,
+                        Insurance = eDocumentState.Submitted,
+                        Convention = eDocumentState.Submitted,
+                        Report = eDocumentState.Invalid,
+                        EvaluationForm = eDocumentState.Missing
+                    },
+                    Attendance = new List<Attendance>
           {
             new Attendance
             {
@@ -151,15 +151,15 @@ namespace InternManagement.Tests
               Type = eAttendanceType.Absent
             },
           }
-        });
-      }
-      var count = interns.Count(intern => intern.Attendance[0].Id != intern.Attendance[1].Id
-        && intern.Attendance[1].Id != intern.Attendance[2].Id
-        && intern.Attendance[2].Id != intern.Attendance[3].Id
-        && intern.Attendance[3].Id != intern.Attendance[4].Id);
-      context.Interns.AddRange(interns);
-      context.SaveChanges();
-    }
+                });
+            }
+            var count = interns.Count(intern => intern.Attendance[0].Id != intern.Attendance[1].Id
+              && intern.Attendance[1].Id != intern.Attendance[2].Id
+              && intern.Attendance[2].Id != intern.Attendance[3].Id
+              && intern.Attendance[3].Id != intern.Attendance[4].Id);
+            context.Interns.AddRange(interns);
+            context.SaveChanges();
+        }
 
-  }
+    }
 }

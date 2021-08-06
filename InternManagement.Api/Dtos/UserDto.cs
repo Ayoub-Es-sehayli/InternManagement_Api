@@ -23,8 +23,6 @@ namespace InternManagement.Api.Dtos
     }
     public class UserDto
     {
-
-        
         [Required]
         [MinLength(3)]
         [DataType(DataType.Text)]
@@ -37,10 +35,6 @@ namespace InternManagement.Api.Dtos
         [MinLength(10)]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required]
-        [MinLength(6)]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
 
         [UserRolesAttribute]
         [Required]

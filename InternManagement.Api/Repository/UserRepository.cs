@@ -26,6 +26,20 @@ namespace InternManagement.Api.Repository
             await SaveChangesAsync();
             return user;
         }
+        public async Task<User> EditUserAsync(int id, User model)
+        {
+            var user = await GetUserByIdAsync(id);
+            if (user != null)
+            {
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Role = model.Role;
+                _context.Users.Update(user);
+                await SaveChangesAsync();
+            }
+            return user;
+        }
         public async Task<User> FirstOrDefaultAsync(int id)
         {
             var user = await _context.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
@@ -58,7 +72,14 @@ namespace InternManagement.Api.Repository
         }
         public async Task<User> GetUserByIdAsync(int id)
         {
-            var user = await _context.Users.Where( i => i.Id == id).FirstOrDefaultAsync();
+            var user = await _context.Users.Select(u => new User
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Role = u.Role
+            }).Where(i => i.Id == id).FirstOrDefaultAsync();
             return user;
         }
     }
