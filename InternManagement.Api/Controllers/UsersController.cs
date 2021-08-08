@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using InternManagement.Api.Dtos;
-using InternManagement.Api.Models;
 using InternManagement.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
