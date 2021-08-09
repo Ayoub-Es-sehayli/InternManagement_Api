@@ -4,7 +4,7 @@ using InternManagement.Api.Enums;
 
 namespace InternManagement.Api.Helpers
 {
-    public class PrintHelper
+    public class PrintHelper : IPrintHelper
     {
         public string PrintDecision(eGender g)
         {

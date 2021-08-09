@@ -1,26 +1,27 @@
 doctype html
 html
    body
-      -const texteStyles = { "padding": "50px", "margin": "auto"}
-      div(style = texteStyles )
-         p DOCH / DtRH #{annulationCode}/#{currentYear}
-         -const titleStyles1 = {"text-align": "center"}
-         div(style = titleStyles1)
-            h4 -   DECISION D’ANNULATION DE STAGE    - 
+      .template
+         -const texteStyles = { "padding": "50px", "margin": "auto"}
+         div(style = texteStyles )
+            p DOCH / DtRH...................../#{currentYear}
+            -const titleStyles1 = {"text-align": "center"}
+            div(style = titleStyles1)
+               h4 -   DECISION D’ANNULATION DE STAGE    - 
 
-         .paragraph1
-            p Le Directeur Général d’Al Omrane Rabat-Salé-Kenitra ;
-            p -Vu la demande formulée par l’intéressée ;
-            p -Vu la décision de stage N #{decision} établie en date du #{decisionDate} ;
-            p -Vu le nombre d’absence injustifiées de l’intéressée ;
-            p -Vu l’appel téléphonique de l’intéressée stipulant l’annulation du stage.
+            .paragraph1
+               p Le Directeur Général d’Al Omrane Rabat-Salé-Kenitra ;
+               p -Vu la demande formulée par l’intéressée ;
+               p -Vu la décision de stage N ................ établie en date du #{decisionDate} ;
+               p -Vu le nombre d’absence injustifiées de l’intéressée ;
+               p -Vu l’appel téléphonique de l’intéressée stipulant l’annulation du stage.
 
-         -const titleStyles2  = {"text-align": "center"}
-         div(style = titleStyles2 )
-            h4 <u>-DECIDÉ-</u>
+            -const titleStyles2  = {"text-align": "center"}
+            div(style = titleStyles2 )
+               h4 <u>-DECIDÉ-</u>
 
-         .paragraph2
-            p <b><u>- Article 1</u></b> : Il est procédé à l’annulation du stage de Mlle. #{fullname} , au sein de la #{direction}. Qui était prévue du #{startDate} au #{endDate}.
-            p <b><u>- Article 2</u></b> : Ce stage est annulé à partir de la date du #{annulationDate}.
-            p <b><u>- Article 3</u></b> : Les services concernés sont chargés de l’application de ladite décision. 
+            .paragraph2
+               p <b><u>- Article 1</u></b> : Il est procédé à l’annulation du stage de Mlle. #{fullname} , au sein de la #{direction}. Qui était prévue du #{startDate} au #{endDate}.
+               p <b><u>- Article 2</u></b> : Ce stage est annulé à partir de la date du #{annulationDate}.
+               p <b><u>- Article 3</u></b> : Les services concernés sont chargés de l’application de ladite décision. 
 
