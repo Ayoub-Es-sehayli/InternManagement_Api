@@ -15,36 +15,16 @@ namespace InternManagement.Tests
 {
     public class UserRepositoryTests
     {
-        private UserRepository repository;
-
-        public UserRepositoryTests()
-        {
-            var config = new ConfigurationBuilder()
-              .AddUserSecrets<ConnectionConfig>()
-              .Build();
-
-            var connConfig = config.GetSection("MysqlConnection").Get<ConnectionConfig>();
-            var connectionString = new MySqlConnectionStringBuilder
-            {
-                Server = connConfig.Server,
-                Database = connConfig.Database,
-                Password = connConfig.Password,
-                UserID = "InternAdmin"
-            }.ConnectionString;
-
-            var options = new DbContextOptionsBuilder<InternContext>()
-             .UseMySQL(connectionString)
-             .Options;
-            var context = new InternContext(options);
-            this.repository = new UserRepository(context);
-
-        }
         [Fact]
         public async Task AddUserAsync_ProperData_ReturnsDto()
         {
+            var mockdb = new MockDbSeed("AttendanceList");
+            var context = mockdb.context;
+            var repository = new UserRepository(context);
             var oldCount = await repository.GetUserCountAsync();
             var model = new User
             {
+                Id = 99,
                 LastName = "Tazi",
                 FirstName = "Ahmed",
                 Email = "ahmed.tazi@gmail.com",
@@ -54,6 +34,42 @@ namespace InternManagement.Tests
             var result = await repository.AddUserAsync(model);
             Assert.NotNull(result);
             Assert.NotEqual<int>(oldCount, await repository.GetUserCountAsync());
+        }
+        [Fact]
+        public async Task EditUserAsync_ProperData()
+        {
+            var mockdb = new MockDbSeed("AttendanceList");
+            var context = mockdb.context;
+            var repository = new UserRepository(context);
+            var model = new User
+            {
+                Id = 99,
+                LastName = "Tazi",
+                FirstName = "Ahmed",
+                Email = "ahmed.tazi@gmail.com",
+                Role = eUserRole.Supervisor,
+            };
+            var user = await repository.GetUserByIdAsync(model.Id);
+            if (user != null)
+            {
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Role = model.Role;
+                context.Users.Update(user);
+                await repository.SaveChangesAsync();
+            }
+            var result = repository.GetUsersAsync();
+            Assert.NotNull(result);
+        }
+        [Fact]
+        public async Task DeleteUserAsync_ProperData()
+        {
+            var mockdb = new MockDbSeed("AttendanceList");
+            var context = mockdb.context;
+            var repository = new UserRepository(context);
+            var result = await repository.DeleteUserAsync(99);
+            Assert.NotNull(result);
         }
     }
 }

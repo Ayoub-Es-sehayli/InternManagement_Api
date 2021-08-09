@@ -8,7 +8,6 @@ using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
 using InternManagement.Api.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -22,7 +21,7 @@ namespace InternManagement.Tests
         [Fact]
         public async Task AddUserAsync_ProperData_ReturnsDto()
         {
-            var dto = new UserDto
+            var indto = new UserAddDto
             {
                 LastName = "Tazi",
                 FirstName = "Ahmed",
@@ -33,14 +32,22 @@ namespace InternManagement.Tests
 
             var model = new User
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
+                FirstName = indto.FirstName,
+                LastName = indto.LastName,
+                Email = indto.Email,
                 Role = eUserRole.Supervisor,
-                Password = dto.Password
+                Password = indto.Password
+            };
+            var outdto = new UserDto
+            {
+                FirstName = indto.FirstName,
+                LastName = indto.LastName,
+                Email = indto.Email,
+                Role = eUserRole.Supervisor
             };
 
-            mapper.Setup(map => map.Map<User>(dto)).Returns(model);
+            mapper.Setup(map => map.Map<User>(indto)).Returns(model);
+            mapper.Setup(map => map.Map<UserDto>(model)).Returns(outdto);
             var confSection = new Mock<IConfigurationSection>();
             var jwtConfig = new JwtConfig
             {
@@ -53,8 +60,7 @@ namespace InternManagement.Tests
             userRepositoryStub.Setup(repo => repo.AddUserAsync(model).Result).Returns(model);
 
             var service = new UserService(userRepositoryStub.Object, mapper.Object, configStub.Object);
-            var result = await service.AddUserAsync(dto);
-            result = Assert.IsType<UserDto>(result);
+            var result = await service.AddUserAsync(indto);
             Assert.Equal<string>(model.Email, result.Email);
         }
         [Fact]
@@ -94,7 +100,67 @@ namespace InternManagement.Tests
 
             Assert.NotNull(result);
             Assert.NotEmpty(result);
+        }
+        [Fact]
+        public async Task DeleteUserAsync_ProperData()
+        {
+            var user = new User
+            {
+                Id = 5,
+                LastName = "Tazi",
+                FirstName = "Ahmed",
+                Email = "ahmed.tazi@gmail.com",
+                Role = eUserRole.Supervisor,
+                Password = "00000000000000"
+            };
+            userRepositoryStub.Setup(repo => repo.DeleteUserAsync(user.Id).Result).Returns(user);
+            var confSection = new Mock<IConfigurationSection>();
+            var jwtConfig = new JwtConfig
+            {
+                Salt = "Omrane"
+            };
 
+            configStub.Setup(config => config.GetSection("JwtKey")).Returns(confSection.Object);
+
+            var service = new UserService(userRepositoryStub.Object, mapper.Object, configStub.Object);
+            var result = await service.DeleteUserAsync(user.Id);
+
+            Assert.NotNull(result);
+        }
+        [Fact]
+        public async Task EditUserAsync_ProperData()
+        {
+            var model = new User
+            {
+                Id = 99,
+                LastName = "Tazi",
+                FirstName = "Ahmed",
+                Email = "ahmed.tazi@gmail.com",
+                Role = eUserRole.Supervisor,
+            };
+
+            var user = new UserDto
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Role = eUserRole.Supervisor,
+            };
+
+            var id = model.Id;
+            userRepositoryStub.Setup(repo => repo.EditUserAsync(model.Id, model).Result).Returns(model);
+            mapper.Setup(map => map.Map<User>(user)).Returns(model);
+            mapper.Setup(map => map.Map<UserDto>(model)).Returns(user);
+
+            var confSection = new Mock<IConfigurationSection>();
+            var jwtConfig = new JwtConfig
+            {
+                Salt = "Omrane"
+            };
+            configStub.Setup(config => config.GetSection("JwtKey")).Returns(confSection.Object);
+            var service = new UserService(userRepositoryStub.Object, mapper.Object, configStub.Object);
+            var result = await service.EditUserAsync(id, user);
+            Assert.NotNull(result);
         }
     }
 }

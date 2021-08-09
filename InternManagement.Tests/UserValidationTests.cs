@@ -12,7 +12,7 @@ namespace InternManagement.Tests
         [Fact]
         public void User_ValidationModel_ProperData_ReturnsFalse()
         {
-            var Dto = new UserDto
+            var Dto = new UserAddDto
             {
                 FirstName = default,
                 LastName = default,

@@ -25,10 +25,20 @@ namespace InternManagement.Api.Services
             this._mapper = mapper;
             this._config = config.GetSection("JwtKey").Get<JwtConfig>();
         }
-        public async Task<UserDto> AddUserAsync(UserDto dto)
+        public async Task<UserDto> AddUserAsync(UserAddDto dto)
         {
             var user = await _repository.AddUserAsync(_mapper.Map<User>(dto));
-            return dto;
+            return _mapper.Map<UserDto>(user);
+        }
+        public async Task<User> DeleteUserAsync(int id)
+        {
+            var user = await _repository.DeleteUserAsync(id);
+            return user;
+        }
+        public async Task<UserDto> EditUserAsync(int id, UserDto model)
+        {
+            var user = await _repository.EditUserAsync(id, _mapper.Map<User>(model));
+            return _mapper.Map<UserDto>(user);
         }
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model)
         {
@@ -45,13 +55,12 @@ namespace InternManagement.Api.Services
             var user = _repository.FirstOrDefaultAsync(id);
             return user;
         }
-         public async Task<IEnumerable<UserListDto>> GetUsersAsync()
-         {
-             var users = await _repository.GetUsersAsync();
-             var dtos = _mapper.Map<IEnumerable<UserListDto>>(users);
-             return dtos;
-         }
-
+        public async Task<IEnumerable<UserListDto>> GetUsersAsync()
+        {
+            var users = await _repository.GetUsersAsync();
+            var dtos = _mapper.Map<IEnumerable<UserListDto>>(users);
+            return dtos;
+        }
         private string generateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -65,6 +74,5 @@ namespace InternManagement.Api.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
     }
 }
