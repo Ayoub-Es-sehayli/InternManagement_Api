@@ -8,10 +8,10 @@ namespace InternManagement.Api.Controllers
     [Route("/api/[controller]")]
     public class PrintController : Controller
     {
-        private readonly PrintHelper _print;
-        public PrintController()
+        private readonly IPrintHelper _print;
+        public PrintController(IPrintHelper printHelper)
         {
-            this._print = new PrintHelper();
+            this._print = printHelper;
         }
         [HttpGet]
         [Route("decision/{gender}")]
@@ -22,7 +22,7 @@ namespace InternManagement.Api.Controllers
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(result);
+            return Ok(new { template = result });
         }
         [HttpGet]
         [Route("annulation/{gender}")]
@@ -33,7 +33,7 @@ namespace InternManagement.Api.Controllers
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(result);
+            return Ok(new { template = result });
         }
         [HttpGet]
         [Route("attestation/{gender}")]
@@ -44,7 +44,7 @@ namespace InternManagement.Api.Controllers
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(result);
+            return Ok(new { template = result });
         }
     }
 }

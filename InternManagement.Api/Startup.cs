@@ -26,8 +26,14 @@ namespace InternManagement.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(builder =>
+            {
+                builder.AddDefaultPolicy(opt =>
+                    opt.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
             services.AddControllers();
-            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InternManagement.Api", Version = "v1" });
@@ -69,6 +75,7 @@ namespace InternManagement.Api
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IPunchInService, PunchInService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPrintHelper, PrintHelper>();
             #endregion
         }
 
