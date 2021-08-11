@@ -18,6 +18,7 @@ namespace InternManagement.Tests
               .UseInMemoryDatabase(DbName)
               .Options;
 
+
             this.context = new InternContext(options);
             if (!initialized)
             {
@@ -26,20 +27,33 @@ namespace InternManagement.Tests
                 initialized = true;
             }
         }
-
-        private void LoadDepartment()
-        {
-            var departments = new List<Department>
+    private void LoadDepartment()
+    {
+      var localtions = new List<Location>
       {
-        new Department { Id = 1, Name = "Direction Generale" },
-        new Department { Id = 2, Name = "Charge de missions partenaires" },
-        new Department { Id = 3, Name = "Departement juridique" },
-        new Department { Id = 4, Name = "Division Qualite et developpement durable" },
-        new Department { Id = 5, Name = "Division Systeme d'Informations" },
-        new Department { Id = 6, Name = "Direction Technique et Ingenierie" },
-        new Department { Id = 7, Name = "Direction Commerciale et marketing" },
-        new Department { Id = 8, Name = "Direction Organisation et Capital Humain" },
-        new Department { Id = 9, Name = "Direction financiere et contrôle de gestion" }
+        new Location
+        {
+          Id = 1,
+          Name = "Al Omrane Rabat-Salé-Kénitra"
+        },
+        new Location
+        {
+          Id = 2,
+          Name = "Al Omrane Tamesna"
+        }
+      };
+      var departments = new List<Department>
+      {
+        new Department { Id = 1, Name = "Direction Generale" , LocationId = 1},
+        new Department { Id = 2, Name = "Charge de missions partenaires" , LocationId = 1 },
+        new Department { Id = 3, Name = "Departement juridique" , LocationId = 1 },
+        new Department { Id = 4, Name = "Division Qualite et developpement durable" , LocationId = 1 },
+        new Department { Id = 5, Name = "Division Systeme d'Informations" , LocationId = 1 },
+        new Department { Id = 6, Name = "Direction Technique et Ingenierie" , LocationId = 1 },
+        new Department { Id = 7, Name = "Direction Commerciale et marketing" , LocationId = 1 },
+        new Department { Id = 8, Name = "Direction Organisation et Capital Humain" , LocationId = 1 },
+        new Department { Id = 9, Name = "Direction financiere et contrôle de gestion" , LocationId = 1 },
+        new Department { Id = 10, Name = "Al Omrane Tamesna" , LocationId = 2 }
       };
 
             context.Departments.AddRange(departments);
@@ -74,7 +88,8 @@ namespace InternManagement.Tests
         new Division { Id = 26, Name = "Departement financier et comptable", DepartmentId = 9 },
         new Division { Id = 27, Name = "Division Finance et tresorerie", DepartmentId = 9 },
         new Division { Id = 28, Name = "Division comptabilite et Fiscalite", DepartmentId = 9 },
-        new Division { Id = 29, Name = "Departement contrôle de gestion", DepartmentId = 9 }
+        new Division { Id = 29, Name = "Departement contrôle de gestion", DepartmentId = 9 },
+        new Division { Id = 30, Name = "Al Omrane Tamesna" , DepartmentId = 10 }
       };
             context.Divisions.AddRange(divisions);
             context.SaveChanges();
@@ -86,34 +101,40 @@ namespace InternManagement.Tests
             var currentTime = new DateTime(2021, 8, 4, 8, 45, 00);
 
 
-            var interns = new List<Intern>();
-            for (int i = 1; i < 100; i++)
-            {
-                interns.Add(new Intern
-                {
-                    Id = i,
-                    FirstName = "Mohamed",
-                    LastName = "Hariss",
-                    Email = "mohamed.hariss@gmail.com",
-                    Phone = "0684257139",
-                    AttendanceAlarmState = eAttendanceAlarmState.None,
-                    FileAlarmState = eFileAlarmState.None,
-                    DivisionId = 25,
-                    Gender = eGender.Male,
-                    StartDate = DateTime.Today,
-                    EndDate = DateTime.Today.AddMonths(2),
-                    State = eInternState.Started,
-                    Documents = new Documents
-                    {
-                        Id = i,
-                        CV = eDocumentState.Submitted,
-                        Letter = eDocumentState.Submitted,
-                        Insurance = eDocumentState.Submitted,
-                        Convention = eDocumentState.Submitted,
-                        Report = eDocumentState.Invalid,
-                        EvaluationForm = eDocumentState.Missing
-                    },
-                    Attendance = new List<Attendance>
+      var interns = new List<Intern>();
+      for (int i = 1; i < 100; i++)
+      {
+        interns.Add(new Intern
+        {
+          Id = i,
+          FirstName = "Mohamed",
+          LastName = "Hariss",
+          Email = "mohamed.hariss@gmail.com",
+          Phone = "0684257139",
+          AttendanceAlarmState = eAttendanceAlarmState.None,
+          FileAlarmState = eFileAlarmState.None,
+          DivisionId = 25,
+          Gender = eGender.Male,
+          StartDate = DateTime.Today,
+          EndDate = DateTime.Today.AddMonths(2),
+          State = eInternState.Started,
+          Decision = new Decision
+          {
+            Id = i,
+            Date = DateTime.Today,
+            Code = "1447/2021"
+          },
+          Documents = new Documents
+          {
+            Id = i,
+            CV = eDocumentState.Submitted,
+            Letter = eDocumentState.Submitted,
+            Insurance = eDocumentState.Submitted,
+            Convention = eDocumentState.Submitted,
+            Report = eDocumentState.Invalid,
+            EvaluationForm = eDocumentState.Missing
+          },
+          Attendance = new List<Attendance>
           {
             new Attendance
             {
@@ -151,15 +172,12 @@ namespace InternManagement.Tests
               Type = eAttendanceType.Absent
             },
           }
-                });
-            }
-            var count = interns.Count(intern => intern.Attendance[0].Id != intern.Attendance[1].Id
-              && intern.Attendance[1].Id != intern.Attendance[2].Id
-              && intern.Attendance[2].Id != intern.Attendance[3].Id
-              && intern.Attendance[3].Id != intern.Attendance[4].Id);
-            context.Interns.AddRange(interns);
-            context.SaveChanges();
-        }
+
+        });
+      }
+      context.Interns.AddRange(interns);
+      context.SaveChanges();
+    }
 
     }
 }

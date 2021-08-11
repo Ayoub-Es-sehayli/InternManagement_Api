@@ -47,7 +47,7 @@ namespace InternManagement.Api.Profiles
           opt => opt.MapFrom(intern => intern.FirstName + " " + intern.LastName))
         .ForMember(
           dto => dto.DaysToFinish,
-          opt => opt.MapFrom(intern => (intern.EndDate - DateTime.Now).TotalDays)
+          opt => opt.MapFrom(intern => (intern.EndDate - DateTime.Today).TotalDays)
         );
     }
   }

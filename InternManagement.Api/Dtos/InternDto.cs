@@ -66,6 +66,9 @@ namespace InternManagement.Api.Dtos
     [Required]
     public int DivisionId { get; set; }
 
+    [Required]
+    public string Responsable { get; set; }
+
     [InternDocumentsAttribute]
     public List<eDocumentState> Documents { get; set; }
   }

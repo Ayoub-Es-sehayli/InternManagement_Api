@@ -60,4 +60,14 @@ namespace InternManagement.Api.Services
             return null;
         }
     }
+<<<<<<< HEAD
+=======
+
+    public async Task<bool> SetDecisionAsync(DecisionFormDto dto)
+    {
+      var model = _mapper.Map<Decision>(dto);
+      return await _repository.SetDecisionForIntern(dto.InternId, model);
+    }
+  }
+>>>>>>> 47801ec4cf26401bd773445f933b7ab08c4d869e
 }

@@ -6,6 +6,7 @@ namespace InternManagement.Api.Dtos
   {
     public int Id { get; set; }
     public string FullName { get; set; }
+    public string Decision { get; set; }
     public string Division { get; set; }
     public eInternState State { get; set; }
   }

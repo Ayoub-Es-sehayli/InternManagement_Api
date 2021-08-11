@@ -206,5 +206,32 @@ namespace InternManagement.Tests
             Assert.NotNull(result);
 
         }
+
+    [Fact]
+    public async Task SetDecisionAsync_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today;
+      var dto = new DecisionFormDto
+      {
+        InternId = 4,
+        Code = "25444/2021",
+        Date = currentDate
+      };
+      var model = new Decision
+      {
+        Id = dto.InternId,
+        InternId = dto.InternId,
+        Code = dto.Code,
+        Date = dto.Date
+      };
+
+      mapper.Setup(map => map.Map<Decision>(dto)).Returns(model);
+      internRepositoryStub.Setup(repo => repo.SetDecisionForIntern(dto.InternId, model).Result).Returns(true);
+      var service = new InternService(internRepositoryStub.Object, mapper.Object);
+
+      var result = await service.SetDecisionAsync(dto);
+
+      Assert.True(result);
     }
+  }
 }
