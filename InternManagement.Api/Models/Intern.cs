@@ -19,6 +19,7 @@ namespace InternManagement.Api.Models
 
     [DataType(DataType.Date)]
     public DateTime EndDate { get; set; }
+    public string Responsable { get; set; }
     public int DivisionId { get; set; }
     public Division Division { get; set; }
 
@@ -35,5 +36,7 @@ namespace InternManagement.Api.Models
     [EnumDataType(typeof(eAttendanceAlarmState))]
     public eAttendanceAlarmState AttendanceAlarmState { get; set; } = eAttendanceAlarmState.None;
     public IList<Attendance> Attendance { get; set; }
+
+    public Decision Decision { get; set; }
   }
 }

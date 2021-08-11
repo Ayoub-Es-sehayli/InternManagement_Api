@@ -117,7 +117,7 @@ namespace InternManagement.Tests
         EndDate = new DateTime(2021, 8, 31),
         DivisionId = 1
       };
-      Assert.Equal<string>(dto.Email, map.Map<InternDto>(model).Email);
+      Assert.Matches(dto.Email, map.Map<InternDto>(model).Email);
     }
 
     [Fact]
@@ -190,6 +190,34 @@ namespace InternManagement.Tests
         }
       };
       Assert.Matches(dtos[0].FullName, map.Map<List<InternListItemDto>>(interns)[0].FullName);
+    }
+
+    [Fact]
+    public void MapDecision_FromDto_ReturnsModel()
+    {
+      var config = new MapperConfiguration(cfg => cfg.AddProfile<DocumentsProfile>());
+      var mapper = config.CreateMapper();
+
+      var currentDate = DateTime.Today;
+      var model = new Decision
+      {
+        Id = 3,
+        InternId = 3,
+        Code = "1255/2021",
+        Date = currentDate
+      };
+      var dto = new DecisionFormDto
+      {
+        InternId = model.InternId,
+        Code = model.Code,
+        Date = model.Date
+      };
+
+      var result = mapper.Map<Decision>(dto);
+      Assert.Equal(model.Id, result.Id);
+      Assert.Equal(model.InternId, result.InternId);
+      Assert.Equal(model.Date, result.Date);
+      Assert.Matches(model.Code, result.Code);
     }
   }
 }
