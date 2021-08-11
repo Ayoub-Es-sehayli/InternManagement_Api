@@ -1,5 +1,8 @@
+using System.Threading.Tasks;
+using InternManagement.Api.Dtos;
 using InternManagement.Api.Enums;
 using InternManagement.Api.Helpers;
+using InternManagement.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternManagement.Api.Controllers
@@ -9,20 +12,22 @@ namespace InternManagement.Api.Controllers
     public class PrintController : Controller
     {
         private readonly IPrintHelper _print;
-        public PrintController(IPrintHelper printHelper)
+        private readonly IInternService _service;
+        public PrintController(IPrintHelper printHelper, IInternService service)
         {
             this._print = printHelper;
+            this._service = service;
         }
         [HttpGet]
-        [Route("decision/{gender}")]
-        public ActionResult<string> printDecision(eGender gender)
+        [Route("decision/{id}")]
+        public async Task<ActionResult<DecisionDto>> printDecision(int id)
         {
-            var result = _print.PrintDecision(gender);
+            var result = await _service.PrintDecisionAsync(id);
             if (result == null)
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(new { template = result });
+            return Ok(result);
         }
         [HttpGet]
         [Route("annulation/{gender}")]
