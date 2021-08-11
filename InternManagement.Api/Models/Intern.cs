@@ -19,6 +19,7 @@ namespace InternManagement.Api.Models
 
     [DataType(DataType.Date)]
     public DateTime EndDate { get; set; }
+    public string Responsable { get; set; }
     public int DivisionId { get; set; }
     public Division Division { get; set; }
 
