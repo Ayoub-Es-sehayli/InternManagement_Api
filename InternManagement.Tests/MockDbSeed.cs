@@ -103,6 +103,12 @@ namespace InternManagement.Tests
           StartDate = DateTime.Today,
           EndDate = DateTime.Today.AddMonths(2),
           State = eInternState.Started,
+          Decision = new Decision
+          {
+            Id = i,
+            Date = DateTime.Today,
+            Code = "1447/2021"
+          },
           Documents = new Documents
           {
             Id = i,

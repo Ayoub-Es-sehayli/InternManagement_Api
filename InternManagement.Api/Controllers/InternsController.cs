@@ -45,5 +45,21 @@ namespace InternManagement.Api.Controllers
 
       return Ok(dtos);
     }
+
+    [HttpPost]
+    [Route("decision/{id}")]
+    public async Task<ActionResult> SetDecision(DecisionFormDto dto)
+    {
+      if (!ModelState.IsValid)
+        return BadRequest();
+
+      var result = await _service.SetDecisionAsync(dto);
+
+      if (result)
+      {
+        return Ok();
+      }
+      return BadRequest();
+    }
   }
 }

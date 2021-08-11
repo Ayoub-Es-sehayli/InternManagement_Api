@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +16,12 @@ namespace InternManagement.Tests
 {
   public class InternRepositoryTests
   {
+    private readonly InternContext context;
     private InternRepository repository;
 
     public InternRepositoryTests()
     {
-      var context = new MockDbSeed("InternDB").context;
+      this.context = new MockDbSeed("InternDB").context;
       this.repository = new InternRepository(context);
     }
     void RemoveInterns(InternContext context)
@@ -67,7 +69,6 @@ namespace InternManagement.Tests
         Email = "hariss@contoso.com",
         Phone = "0783848837",
         DivisionId = 1,
-
         Documents = new()
         {
           CV = eDocumentState.Submitted,
@@ -126,17 +127,91 @@ namespace InternManagement.Tests
         Assert.NotEmpty(interns);
         Assert.All(interns, intern =>
         {
-          Assert.NotEmpty(intern.Division.Name);
           Assert.Null(intern.Email);
           Assert.Null(intern.Documents);
+          Assert.NotEmpty(intern.Division.Name);
+          Assert.NotEqual(DateTime.Today.Year, intern.EndDate.Year);
           Assert.Equal(1, intern.StartDate.Year);
-          Assert.Equal(1, intern.EndDate.Year);
         });
       }
       else
       {
         Assert.Empty(interns);
       }
+    }
+
+    [Fact]
+    public async Task SetDecisionDetails_AddsDecision()
+    {
+      var id = 201;
+      var currentTime = DateTime.Today;
+
+      await context.AddAsync<Intern>(new Intern
+      {
+        Id = id,
+        State = eInternState.ApplicationFilled,
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        Email = "mohamed.hariss@gmail.com",
+        Phone = "0684257139",
+        AttendanceAlarmState = eAttendanceAlarmState.None,
+        FileAlarmState = eFileAlarmState.None,
+        DivisionId = 25,
+        Gender = eGender.Male,
+        StartDate = DateTime.Today,
+        EndDate = DateTime.Today.AddMonths(2),
+        Documents = new Documents
+        {
+          Id = id,
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Submitted,
+          Report = eDocumentState.Invalid,
+          EvaluationForm = eDocumentState.Missing
+        }
+      });
+      await context.SaveChangesAsync();
+      var decision = new Decision
+      {
+        Id = id,
+        InternId = id,
+        Code = "2548/2021",
+        Date = currentTime
+      };
+      var count = await repository.GetInternCountAsync();
+      var oldCount = await context.Set<Decision>().CountAsync();
+      Assert.NotEqual(0, count);
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        if (intern.Decision == null)
+        {
+          context.ChangeTracker.Clear();
+          await context.AddAsync(decision);
+        }
+        else
+        {
+          intern.Decision.Code = decision.Code;
+          intern.Decision.Date = decision.Date;
+        };
+        switch (intern.State)
+        {
+          case eInternState.ApplicationFilled:
+          case eInternState.AssignedDecision:
+            intern.State = eInternState.AssignedDecision;
+            break;
+        }
+        await context.SaveChangesAsync();
+      }
+
+      var updated = await repository.GetInternAsync(id);
+
+      Assert.NotEqual(oldCount, await context.Set<Decision>().CountAsync());
+      Assert.NotNull(updated);
+      Assert.NotNull(updated.Decision);
+      Assert.Equal(decision.Date, updated.Decision.Date);
+      Assert.Matches(decision.Code, updated.Decision.Code);
     }
   }
 }

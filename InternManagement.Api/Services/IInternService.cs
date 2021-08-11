@@ -10,5 +10,6 @@ namespace InternManagement.Api.Services
     Task<InternDto> GetInternByIdAsync(int id);
 
     Task<IEnumerable<InternListItemDto>> GetInternsAsync();
+    Task<bool> SetDecisionAsync(DecisionFormDto dto);
   }
 }

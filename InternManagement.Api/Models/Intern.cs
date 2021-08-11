@@ -35,5 +35,7 @@ namespace InternManagement.Api.Models
     [EnumDataType(typeof(eAttendanceAlarmState))]
     public eAttendanceAlarmState AttendanceAlarmState { get; set; } = eAttendanceAlarmState.None;
     public IList<Attendance> Attendance { get; set; }
+
+    public Decision Decision { get; set; }
   }
 }
