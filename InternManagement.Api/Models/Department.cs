@@ -8,5 +8,7 @@ namespace InternManagement.Api.Models
     public string Name { get; set; }
 
     public IList<Division> Divisions { get; set; }
+    public int LocationId { get; set; }
+    public Location Location { get; set; }
   }
 }

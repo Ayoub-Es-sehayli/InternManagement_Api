@@ -28,6 +28,7 @@ namespace InternManagement.Api.Repository
       var intern = await _context.Interns
       .Include(i => i.Division)
         .ThenInclude(d => d.Department)
+          .ThenInclude(d => d.Location)
       .Include(i => i.Decision)
       .Include(i => i.Attendance)
       .Where(i => i.Id == id)
