@@ -26,6 +26,7 @@ services:
     ports:
       - '3306:3306'
     environment:
+      LANG: C.UTF-8
       MYSQL_DATABASE: 'InternDB'
       MYSQL_USER: 'InternAdmin'
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
