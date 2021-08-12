@@ -1,11 +1,11 @@
 doctype html
-html 
-   -const bodyStyles = {"margin-top": "200px" }
-   body
+html
+   -const bodyStyles = {"font-family": "Bookman Old Style"}
+   body(style = bodyStyles)
       -const texteStyles = { "padding": "50px", "margin": "auto"}
       div(style = texteStyles)
-         p <b>DOCH / DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear}</b>
-         -const titleStyles1 = {"text-align": "center", "margin-top": "50px"}
+         p SAO RSK/DOCH/DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear} 
+         -const titleStyles1 = {"text-align": "center", "margin-top": "90px"}
          div(style = titleStyles1)
             h4 <u>- DECISION DE STAGE -</u>
          
@@ -21,7 +21,8 @@ html
          div(style = titleStyles2 )
             h3 <u>- Décide -</u>
 
-         div 
+         -const paragraph2Styles = {"text-align": "justify", "text-justify": "inter-word"}
+         div(style = paragraph2Styles)
                p <b><u>-Article 1</u></b> : Monsieur <b>#{fullname}</b>, est autorisé à effectuer un stage au sein de #{department} et ce à compter du #{startDate} au #{endDate} (à Raison de 3 jours en présentiel et 2 jours en Télétravail) ;
 
                p <b><u>-Article 2</u></b> : L’intéressé est tenu de se conformer aux règles d’Al Omrane Rabat-Salé-Kénitra, et notamment en matière de couverture d'assurance accident de travail qui doit être prise en charge par les personnes concernées ; ladite assurance doit être remise à d’Al Omrane Rabat-Salé-Kénitra avant le démarrage du stage ; En cas d’accident de travail, La responsabilité de la Société se limite à informer les proches dans un délai de 48 heures et ne prend nullement en charge les accidents survenus au cours de la période de stage ni à l’intérieur ni à l’extérieur de la Société ;
