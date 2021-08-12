@@ -1,27 +1,31 @@
 doctype html
 html
+   -const bodyStyles = {"margin-top": "200px"}
    body
       .template
          -const texteStyles = { "padding": "50px", "margin": "auto"}
          div(style = texteStyles )
-               p DOCH / DtRH...................../#{currentYear}
-               -const titleStyles1 = {"text-align": "center"}
-               div(style = titleStyles1)
-                     h4 -   DECISION D’ANNULATION DE STAGE    - 
+            p <b>DOCH / DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear}</b>
+            -const titleStyles1 = {"text-align": "center","margin-top": "90px"}
+            div(style = titleStyles1)
+               h4 -   DECISION D’ANNULATION DE STAGE    - 
 
-               .paragraph1
-                  p Le Directeur Général d’Al Omrane Rabat-Salé-Kenitra ;
-                  p -Vu la demande formulée par l’intéressé ;
-                  p -Vu la décision de stage N ................ établie en date du #{decisionDate} ;
-                  p -Vu le nombre d’absence injustifiées de l’intéressée ;
-                  p -Vu l’appel téléphonique de l’intéressée stipulant l’annulation du stage.
 
-               -const titleStyles2  = {"text-align": "center"}
-               div(style = titleStyles2 )
-                  h4 <u>-DECIDÉ-</u>
+            div 
+               -const paragraph1Styles = {"line-height": "110%" , "margin-bottom": "50px"}
+               p(style = paragraph1Styles) Le Directeur Général d’Al Omrane Rabat-Salé-Kenitra ;
+                  <br> -Vu la demande formulée par l’intéressé ;
+                  <br> -Vu la décision de stage N #{decisionCode} établie en date du #{decisionDate} ;
+                  <br> -Vu le nombre d’absence injustifiées de l’intéressée ;
+                  <br> -Vu l’appel téléphonique de l’intéressée stipulant l’annulation du stage.
 
-               .paragraph2
-               p <b><u>- Article 1</u></b> : Il est procédé à l’annulation du stage de M. #{fullname}, au sein de la #{direction}. Qui était prévue du#{startDate} au #{endDate}.
+            -const titleStyles2  = {"text-align": "center", "margin-top": "50px"}
+            div(style = titleStyles2 )
+               h4 <u>-DECIDÉ-</u>
+
+            -const paragraph2Styles = { "margin-top": "50px"}
+            div(style = paragraph2Styles )
+               p <b><u>- Article 1</u></b> : Il est procédé à l’annulation du stage de M. <b>#{fullname}</b>, au sein de la #{department}. Qui était prévue du #{startDate} au #{endDate}.
                p <b><u>- Article 2</u></b> : Ce stage est annulé à partir de la date du #{annulationDate}.
                p <b><u>- Article 3</u></b> : Les services concernés sont chargés de l’application de ladite décision. 
 

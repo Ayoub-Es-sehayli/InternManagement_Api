@@ -59,15 +59,34 @@ namespace InternManagement.Api.Services
             }
             return null;
         }
+        public async Task<AttestationDto> PrintAttestationAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateAttestation = _print.PrintCertificate(intern.Gender);
+                var attestationdto = _mapper.Map<AttestationDto>(intern);
+                attestationdto.Template = templateAttestation;
+                return attestationdto;
+            }
+            return null;
+        }
+        public async Task<AnnulationDto> PrintAnnulationAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateAnnulation = _print.PrintCancel(intern.Gender);
+                var annulationdto = _mapper.Map<AnnulationDto>(intern);
+                annulationdto.Template = templateAnnulation;
+                return annulationdto;
+            }
+            return null;
+        }
+        public async Task<bool> SetDecisionAsync(DecisionFormDto dto)
+        {
+            var model = _mapper.Map<Decision>(dto);
+            return await _repository.SetDecisionForIntern(dto.InternId, model);
+        }
     }
-<<<<<<< HEAD
-=======
-
-    public async Task<bool> SetDecisionAsync(DecisionFormDto dto)
-    {
-      var model = _mapper.Map<Decision>(dto);
-      return await _repository.SetDecisionForIntern(dto.InternId, model);
-    }
-  }
->>>>>>> 47801ec4cf26401bd773445f933b7ab08c4d869e
 }
