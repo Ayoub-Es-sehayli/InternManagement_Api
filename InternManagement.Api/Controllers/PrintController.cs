@@ -41,15 +41,15 @@ namespace InternManagement.Api.Controllers
             return Ok(new { template = result });
         }
         [HttpGet]
-        [Route("attestation/{gender}")]
-        public ActionResult<string> printCertificate(eGender gender)
+        [Route("attestation/{id}")]
+        public async Task<ActionResult<AttestationDto>> printCertificate(int id)
         {
-            var result = _print.PrintCertificate(gender);
+            var result = await _service.PrintAttestationAsync(id);
             if (result == null)
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(new { template = result });
+            return Ok(result);
         }
     }
 }

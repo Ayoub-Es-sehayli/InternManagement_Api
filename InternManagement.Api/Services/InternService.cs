@@ -59,6 +59,17 @@ namespace InternManagement.Api.Services
             }
             return null;
         }
+        public async Task<AttestationDto> PrintAttestationAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateAttestation = _print.PrintCertificate(intern.Gender);
+                var attestationdto = _mapper.Map<AttestationDto>(intern);
+                attestationdto.Template = templateAttestation;
+                return attestationdto;
+            }
+            return null;
     }
 <<<<<<< HEAD
 =======

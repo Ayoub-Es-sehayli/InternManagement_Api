@@ -206,6 +206,22 @@ namespace InternManagement.Tests
             Assert.NotNull(result);
 
         }
+        [Fact]
+        public async Task PrintAttestation_ProperData_ReturnsAttestationDto()
+        {
+            var id = 99;
+            var intern = new Intern { };
+            var attestationDto = new AttestationDto { };
+
+            internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
+            mapper.Setup(map => map.Map<AttestationDto>(intern)).Returns(attestationDto);
+
+
+            var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
+            var result = await service.PrintAttestationAsync(id);
+
+            Assert.NotNull(result);
+        }
 
     [Fact]
     public async Task SetDecisionAsync_ReturnsTrue()

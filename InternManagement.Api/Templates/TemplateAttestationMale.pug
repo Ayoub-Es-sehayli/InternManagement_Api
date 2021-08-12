@@ -1,24 +1,24 @@
 doctype html
 html
+   -const bodyStyles = {"margin-top": "200px" }
    body
-     -const texteStyles = { "padding": "50px", "margin": "auto"}
-      div(style = texteStyles )
-         -const dateStyle = { "text-align": "right"}
-         div(style = dateStyle)
-            p Rabat, Le ..........................
-         p SAO RSK/DOCH/DtRH .................../#{currentYear}
-         -const titleStyles1 = {"text-align": "center"}
+      -const texteStyles = { "padding": "50px", "margin": "auto"}
+      div(style = texteStyles)
+         p <b>DOCH / DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear}</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rabat, Le 
+         -const titleStyles1 = {"text-align": "center" ,"margin-top": "90px"}
          div(style = titleStyles1)
             h4  <u> ATTESTATION DE STAGE </u>
 
-         .paragraph   
+         -const paragraph1Styles = {"margin-top": "50px"}
+         div(style = paragraph1Styles )    
             p Le Directeur Général d’Al Omrane Rabat – Salé – Kénitra.
 
-         -const titleStyles2  = {"text-align": "center"}
+         -const titleStyles2  = {"text-align": "center" , "margin-top": "50px"}
          div(style = titleStyles2 )
             h4  <u> - ATTESTE -</u>
 
-         .paragraph2
-            p Que Monsieur #{fullname} a effectué un stage non rémunéré au sein #{location}, et ce du #{startDate} au #{endDate}.
-            p La présente attestation est délivrée  à la demande de l’intéressée pour usage administratif.
+         -const paragraph2Styles = { "margin-top": "50px"}
+         div(style = paragraph2Styles )
+            p Que Monsieur <b>#{fullname}</b> a effectué un stage non rémunéré au sein d' #{location}, et ce du #{startDate} au #{endDate}.
+            p La présente attestation est délivrée  à la demande de l’intéressé pour usage administratif.
 
