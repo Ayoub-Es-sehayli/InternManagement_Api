@@ -222,32 +222,48 @@ namespace InternManagement.Tests
 
             Assert.NotNull(result);
         }
+        [Fact]
+        public async Task PrintAnnulation_ProperData_ReturnsAnnulationDto()
+        {
+            var id = 99;
+            var intern = new Intern { };
+            var annulationDto = new AnnulationDto { };
 
-    [Fact]
-    public async Task SetDecisionAsync_ReturnsTrue()
-    {
-      var currentDate = DateTime.Today;
-      var dto = new DecisionFormDto
-      {
-        InternId = 4,
-        Code = "25444/2021",
-        Date = currentDate
-      };
-      var model = new Decision
-      {
-        Id = dto.InternId,
-        InternId = dto.InternId,
-        Code = dto.Code,
-        Date = dto.Date
-      };
+            internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
+            mapper.Setup(map => map.Map<AnnulationDto>(intern)).Returns(annulationDto);
 
-      mapper.Setup(map => map.Map<Decision>(dto)).Returns(model);
-      internRepositoryStub.Setup(repo => repo.SetDecisionForIntern(dto.InternId, model).Result).Returns(true);
-      var service = new InternService(internRepositoryStub.Object, mapper.Object);
 
-      var result = await service.SetDecisionAsync(dto);
+            var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
+            var result = await service.PrintAnnulationAsync(id);
 
-      Assert.True(result);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task SetDecisionAsync_ReturnsTrue()
+        {
+            var currentDate = DateTime.Today;
+            var dto = new DecisionFormDto
+            {
+                InternId = 4,
+                Code = "25444/2021",
+                Date = currentDate
+            };
+            var model = new Decision
+            {
+                Id = dto.InternId,
+                InternId = dto.InternId,
+                Code = dto.Code,
+                Date = dto.Date
+            };
+
+            mapper.Setup(map => map.Map<Decision>(dto)).Returns(model);
+            internRepositoryStub.Setup(repo => repo.SetDecisionForIntern(dto.InternId, model).Result).Returns(true);
+            var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
+
+            var result = await service.SetDecisionAsync(dto);
+
+            Assert.True(result);
+        }
     }
-  }
 }

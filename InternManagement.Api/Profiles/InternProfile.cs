@@ -21,6 +21,11 @@ namespace InternManagement.Api.Profiles
             CreateMap<Intern, AttestationDto>()
               .ForMember(dto => dto.FullName, opt => opt.MapFrom(intern => intern.FirstName + " " + intern.LastName))
               .ForMember(dto => dto.Location, opt => opt.MapFrom(intern => intern.Division.Department.Location.Name));
+            CreateMap<Intern, AnnulationDto>()
+              .ForMember(dto => dto.FullName, opt => opt.MapFrom(intern => intern.FirstName + " " + intern.LastName))
+              .ForMember(dto => dto.Department, opt => opt.MapFrom(intern => intern.Division.Department.Name))
+              .ForMember(dto => dto.DecisionCode, opt => opt.MapFrom(intern => intern.Decision.Code))
+              .ForMember(dto => dto.DecisionDate, opt => opt.MapFrom(intern => intern.Decision.Date));
         }
     }
 }

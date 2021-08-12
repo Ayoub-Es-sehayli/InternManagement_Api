@@ -30,15 +30,15 @@ namespace InternManagement.Api.Controllers
             return Ok(result);
         }
         [HttpGet]
-        [Route("annulation/{gender}")]
-        public ActionResult<string> printCancel(eGender gender)
+        [Route("annulation/{id}")]
+        public async Task<ActionResult<AnnulationDto>> printCancel(int id)
         {
-            var result = _print.PrintCancel(gender);
+            var result = await _service.PrintAnnulationAsync(id);
             if (result == null)
             {
                 return BadRequest(new { message = "nothing to print" });
             }
-            return Ok(new { template = result });
+            return Ok(result);
         }
         [HttpGet]
         [Route("attestation/{id}")]
