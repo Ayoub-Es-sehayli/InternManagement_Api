@@ -98,5 +98,28 @@ namespace InternManagement.Api.Repository
       }
       return false;
     }
+
+    public async Task<bool> SetAttestationForIntern(int id, Attestation attestation)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        var intern = await this.GetInternAsync(id);
+        if (intern.State == eInternState.Finished)
+        {
+          if (intern.Attestation == null)
+          {
+            await _context.AddAsync(attestation);
+          }
+          switch (intern.State)
+          {
+            case eInternState.Finished:
+              intern.State = eInternState.FileClosed;
+              break;
+          }
+          await _context.SaveChangesAsync();
+        }
+      }
+      return false;
+    }
   }
 }

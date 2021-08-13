@@ -11,5 +11,6 @@ namespace InternManagement.Api.Repository
     Task<Intern> GetInternAsync(int id);
     Task<IEnumerable<Intern>> GetInternsAsync();
     Task<bool> SetDecisionForIntern(int id, Decision decision);
+    Task<bool> SetAttestationForIntern(int id, Attestation attestation);
   }
 }

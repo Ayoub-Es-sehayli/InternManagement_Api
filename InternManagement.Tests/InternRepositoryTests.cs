@@ -213,5 +213,148 @@ namespace InternManagement.Tests
       Assert.Equal(decision.Date, updated.Decision.Date);
       Assert.Matches(decision.Code, updated.Decision.Code);
     }
+
+    [Fact]
+    public async Task SetAttestationDetails_AddsAttestation()
+    {
+      var id = 203;
+      var currentTime = DateTime.Today;
+      var attestation = new Attestation
+      {
+        Id = id,
+        InternId = id,
+        Code = "2548/2021",
+        Date = currentTime
+      };
+
+      await context.AddAsync<Intern>(new Intern
+      {
+        Id = id,
+        State = eInternState.Finished,
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        Email = "mohamed.hariss@gmail.com",
+        Phone = "0684257139",
+        AttendanceAlarmState = eAttendanceAlarmState.None,
+        FileAlarmState = eFileAlarmState.None,
+        DivisionId = 25,
+        Gender = eGender.Male,
+        StartDate = DateTime.Today,
+        EndDate = DateTime.Today.AddMonths(2),
+        Documents = new Documents
+        {
+          Id = id,
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Submitted,
+          Report = eDocumentState.Valid,
+          EvaluationForm = eDocumentState.Submitted
+        }
+      });
+      await context.SaveChangesAsync();
+      var count = await repository.GetInternCountAsync();
+      var oldCount = await context.Set<Attestation>().CountAsync();
+      Assert.NotEqual(0, count);
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        if (intern.State == eInternState.Finished)
+        {
+          if (intern.Attestation == null)
+          {
+            await context.AddAsync(attestation);
+          }
+          switch (intern.State)
+          {
+            case eInternState.Finished:
+              intern.State = eInternState.FileClosed;
+              break;
+          }
+          await context.SaveChangesAsync();
+        }
+      }
+
+      var updated = await repository.GetInternAsync(id);
+
+      Assert.NotEqual(oldCount, await context.Set<Attestation>().CountAsync());
+      Assert.NotNull(updated);
+      Assert.Equal(eInternState.FileClosed, updated.State);
+      Assert.NotNull(updated.Attestation);
+      Assert.Equal(attestation.Date, updated.Attestation.Date);
+      Assert.Matches(attestation.Code, updated.Attestation.Code);
+    }
+
+    [Fact]
+    public async Task SetAttestationDetails_ForNotFinishedState_DoesntChangeState()
+    {
+      var id = 203;
+      var currentTime = DateTime.Today;
+      var attestation = new Attestation
+      {
+        Id = id,
+        InternId = id,
+        Code = "2548/2021",
+        Date = currentTime
+      };
+
+      await context.AddAsync<Intern>(new Intern
+      {
+        Id = id,
+        State = eInternState.Started,
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        Email = "mohamed.hariss@gmail.com",
+        Phone = "0684257139",
+        AttendanceAlarmState = eAttendanceAlarmState.None,
+        FileAlarmState = eFileAlarmState.None,
+        DivisionId = 25,
+        Gender = eGender.Male,
+        StartDate = DateTime.Today,
+        EndDate = DateTime.Today.AddMonths(2),
+        Attestation = attestation,
+        Documents = new Documents
+        {
+          Id = id,
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Submitted,
+          Report = eDocumentState.Valid,
+          EvaluationForm = eDocumentState.Submitted
+        }
+      });
+      await context.SaveChangesAsync();
+
+      var count = await repository.GetInternCountAsync();
+      var oldCount = await context.Set<Attestation>().CountAsync();
+      Assert.NotEqual(0, count);
+
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        if (intern.State == eInternState.Finished)
+        {
+          if (intern.Attestation == null)
+          {
+            await context.AddAsync(attestation);
+          }
+          switch (intern.State)
+          {
+            case eInternState.Finished:
+              intern.State = eInternState.FileClosed;
+              break;
+          }
+          await context.SaveChangesAsync();
+        }
+      }
+
+      var updated = await repository.GetInternAsync(id);
+
+      Assert.Equal(oldCount, await context.Set<Attestation>().CountAsync());
+      Assert.NotNull(updated);
+      Assert.NotNull(updated.Attestation);
+      Assert.NotEqual(eInternState.FileClosed, updated.State);
+    }
   }
 }

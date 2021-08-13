@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InternManagement.Api.Dtos
 {
-  public class DecisionFormDto
+  public class AttestationFormDto
   {
     [Required]
     public int InternId { get; set; }

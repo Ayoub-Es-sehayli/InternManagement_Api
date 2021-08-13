@@ -50,5 +50,11 @@ namespace InternManagement.Api.Services
       var model = _mapper.Map<Decision>(dto);
       return await _repository.SetDecisionForIntern(dto.InternId, model);
     }
+
+    public async Task<bool> SetAttestationAsync(AttestationFormDto dto)
+    {
+      var model = _mapper.Map<Attestation>(dto);
+      return await _repository.SetAttestationForIntern(dto.InternId, model);
+    }
   }
 }

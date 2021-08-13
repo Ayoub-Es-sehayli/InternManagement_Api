@@ -29,7 +29,7 @@ namespace InternManagement.Tests
 
     private void LoadDepartment()
     {
-      var localtions = new List<Location>
+      var locations = new List<Location>
       {
         new Location
         {
@@ -42,6 +42,8 @@ namespace InternManagement.Tests
           Name = "Al Omrane Tamesna"
         }
       };
+      context.Set<Location>().AddRange(locations);
+      context.SaveChanges();
       var departments = new List<Department>
       {
         new Department { Id = 1, Name = "Direction Generale" , LocationId = 1},

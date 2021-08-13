@@ -214,5 +214,32 @@ namespace InternManagement.Tests
 
       Assert.True(result);
     }
+
+    [Fact]
+    public async Task SetAttestationAsync_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today;
+      var dto = new AttestationFormDto
+      {
+        InternId = 4,
+        Code = "9514/2021",
+        Date = currentDate
+      };
+      var model = new Attestation
+      {
+        Id = dto.InternId,
+        InternId = dto.InternId,
+        Code = dto.Code,
+        Date = dto.Date
+      };
+
+      mapper.Setup(map => map.Map<Attestation>(dto)).Returns(model);
+      internRepositoryStub.Setup(repo => repo.SetAttestationForIntern(dto.InternId, model).Result).Returns(true);
+      var service = new InternService(internRepositoryStub.Object, mapper.Object);
+
+      var result = await service.SetAttestationAsync(dto);
+
+      Assert.True(result);
+    }
   }
 }
