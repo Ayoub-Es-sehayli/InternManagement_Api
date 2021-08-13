@@ -38,5 +38,6 @@ namespace InternManagement.Api.Models
     public IList<Attendance> Attendance { get; set; }
 
     public Decision Decision { get; set; }
+    public Attestation Attestation { get; set; }
   }
 }

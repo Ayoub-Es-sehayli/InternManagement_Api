@@ -219,5 +219,33 @@ namespace InternManagement.Tests
       Assert.Equal(model.Date, result.Date);
       Assert.Matches(model.Code, result.Code);
     }
+
+    [Fact]
+    public void MapAttestation_FromDto_ReturnsModel()
+    {
+      var config = new MapperConfiguration(cfg => cfg.AddProfile<DocumentsProfile>());
+      var mapper = config.CreateMapper();
+      var currentDate = DateTime.Today;
+      var id = 101;
+      var model = new Attestation
+      {
+        Id = id,
+        InternId = id,
+        Code = "2054/2021",
+        Date = currentDate
+      };
+      var dto = new AttestationFormDto
+      {
+        InternId = id,
+        Code = model.Code,
+        Date = model.Date
+      };
+
+      var result = mapper.Map<Attestation>(dto);
+
+      Assert.Matches(model.Code, result.Code);
+      Assert.Equal(model.Id, result.Id);
+      Assert.Equal(model.Date, result.Date);
+    }
   }
 }
