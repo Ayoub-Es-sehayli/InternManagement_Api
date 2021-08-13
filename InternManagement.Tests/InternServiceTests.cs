@@ -228,13 +228,13 @@ namespace InternManagement.Tests
       var id = 99;
       var intern = new Intern { };
       var annulationDto = new AnnulationDto { };
-
+      var reasons = new AnnulationReasonsDto { };
       internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
       mapper.Setup(map => map.Map<AnnulationDto>(intern)).Returns(annulationDto);
 
 
       var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
-      var result = await service.PrintAnnulationAsync(id);
+      var result = await service.PrintAnnulationAsync(id, reasons);
 
       Assert.NotNull(result);
     }

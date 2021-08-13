@@ -18,6 +18,7 @@ namespace InternManagement.Api.Repository
     public async Task<Intern> AddInternAsync(Intern model)
     {
       model.Id = await GetInternCountAsync() + 1;
+      model.State = eInternState.ApplicationFilled;
       await _context.AddAsync<Intern>(model);
       await SaveChangesAsync();
       return await _context.Interns.OrderBy(intern => intern.Id).LastAsync();
@@ -33,6 +34,40 @@ namespace InternManagement.Api.Repository
       .Include(i => i.Attendance)
       .Where(i => i.Id == id)
       .FirstOrDefaultAsync();
+      return intern;
+    }
+
+
+    public async Task<Intern> GetInternWithDecision(int id)
+    {
+      var intern = await this.GetInternAsync(id);
+      if (intern != null)
+      {
+        await _context.Entry(intern).Navigation("Decision").LoadAsync();
+      }
+      return intern;
+    }
+
+    public async Task<Intern> GetInternWithDepartment(int id)
+    {
+      var intern = await this.GetInternAsync(id);
+      if (intern != null)
+      {
+        await _context.Entry(intern).Navigation("Division").LoadAsync();
+        await _context.Entry(intern.Division).Navigation("Department").LoadAsync();
+      }
+      return intern;
+    }
+
+    public async Task<Intern> GetInternWithDepartmentAndLocation(int id)
+    {
+      var intern = await this.GetInternAsync(id);
+      if (intern != null)
+      {
+        await _context.Entry(intern).Navigation("Division").LoadAsync();
+        await _context.Entry(intern.Division).Navigation("Department").LoadAsync();
+        await _context.Entry(intern.Division.Department).Navigation("Location").LoadAsync();
+      }
       return intern;
     }
 
