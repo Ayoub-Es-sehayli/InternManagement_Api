@@ -50,7 +50,7 @@ namespace InternManagement.Api.Services
     }
     public async Task<DecisionDto> PrintDecisionAsync(int id)
     {
-      var intern = await _repository.GetInternAsync(id);
+      var intern = await _repository.GetInternWithDepartment(id);
       if (intern != null)
       {
         var templateDecision = _print.PrintDecision(intern.Gender);
@@ -62,7 +62,7 @@ namespace InternManagement.Api.Services
     }
     public async Task<AttestationDto> PrintAttestationAsync(int id)
     {
-      var intern = await _repository.GetInternAsync(id);
+      var intern = await _repository.GetInternWithDepartmentAndLocation(id);
       if (intern != null)
       {
         var templateAttestation = _print.PrintCertificate(intern.Gender);
@@ -74,7 +74,7 @@ namespace InternManagement.Api.Services
     }
     public async Task<AnnulationDto> PrintAnnulationAsync(int id, AnnulationReasonsDto reasons)
     {
-      var intern = await _repository.GetInternAsync(id);
+      var intern = await _repository.GetInternWithDecision(id);
       if (intern != null)
       {
         var templateAnnulation = _print.PrintCancel(intern.Gender);

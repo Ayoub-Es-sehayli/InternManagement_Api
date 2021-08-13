@@ -8,7 +8,6 @@ using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Moq;
 using MySql.Data.MySqlClient;
 using Xunit;
 
@@ -102,10 +101,28 @@ namespace InternManagement.Tests
     public async Task GetInternAsync_WithProperId_ReturnsIntern()
     {
       var latestId = 4;
-      var intern = await repository.GetInternAsync(latestId);
+      var intern = await repository.GetInternWithAttendanceAndDivision(latestId);
       Assert.NotNull(intern);
-      Assert.Equal<int>(latestId, intern.Id);
-      Assert.NotEmpty(intern.FirstName);
+      Assert.NotEmpty(intern.Attendance);
+      Assert.NotNull(intern.Division);
+    }
+
+    [Fact]
+    public async Task GetInternWithDepartment_WithProperId_ReturnsIntern()
+    {
+      var id = 4;
+      var intern = await repository.GetInternWithDepartment(id);
+      Assert.NotNull(intern);
+      Assert.NotNull(intern.Division.Department);
+    }
+
+    [Fact]
+    public async Task GetInternWithDepartmentAndLocation_WithProperId_ReturnIntern()
+    {
+      var id = 4;
+      var intern = await repository.GetInternWithDepartmentAndLocation(id);
+      Assert.NotNull(intern);
+      Assert.NotNull(intern.Division.Department.Location);
     }
 
     [Fact]
@@ -143,7 +160,7 @@ namespace InternManagement.Tests
     [Fact]
     public async Task SetDecisionDetails_AddsDecision()
     {
-      var id = 201;
+      var id = 101;
       var currentTime = DateTime.Today;
 
       await context.AddAsync<Intern>(new Intern
@@ -187,7 +204,6 @@ namespace InternManagement.Tests
         var intern = await repository.GetInternAsync(id);
         if (intern.Decision == null)
         {
-          context.ChangeTracker.Clear();
           await context.AddAsync(decision);
         }
         else
@@ -217,7 +233,7 @@ namespace InternManagement.Tests
     [Fact]
     public async Task SetAttestationDetails_AddsAttestation()
     {
-      var id = 203;
+      var id = 204;
       var currentTime = DateTime.Today;
       var attestation = new Attestation
       {
