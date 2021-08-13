@@ -1,0 +1,23 @@
+doctype html
+html
+   -const bodyStyles = {"font-family": "Bookman Old Style"}
+   body(style = bodyStyles)
+      -const texteStyles = { "padding": "50px", "margin": "auto","font-size": "13px"}
+      div(style = texteStyles)
+         p SAO RSK/DOCH/DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rabat, Le 
+         -const titleStyles1 = {"text-align": "center", "margin-top": "90px","font-size": "17px"}
+         div(style = titleStyles1)
+            h4  <u> ATTESTATION DE STAGE </u>
+
+         -const paragraph1Styles = {"margin-top": "50px","font-size": "17px"}
+         div(style = paragraph1Styles )
+            p Le Directeur Général d’Al Omrane Rabat – Salé – Kénitra.
+
+         -const titleStyles2  = {"text-align": "center", "margin-top": "50px","font-size": "17px"}
+         div(style = titleStyles2 )
+            h4  <u> - ATTESTE -</u>
+
+         -const paragraph2Styles = { "margin-top": "50px","text-align": "justify", "text-justify": "inter-word","font-size": "17px"}
+         div(style = paragraph2Styles )
+            p Que Mademoiselle <b>#{fullname}</b> a effectué un stage non rémunéré au sein d' #{location}, et ce du #{startDate} au #{endDate}.
+            p La présente attestation est délivrée  à la demande de l’intéressée pour usage administratif.

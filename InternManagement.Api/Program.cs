@@ -13,7 +13,18 @@ namespace InternManagement.Api
   {
     public static void Main(string[] args)
     {
-      CreateHostBuilder(args).Build().Run();
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseUrls("http://*:5000");
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>

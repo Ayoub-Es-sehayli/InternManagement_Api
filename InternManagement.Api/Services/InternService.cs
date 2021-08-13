@@ -3,52 +3,91 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using InternManagement.Api.Dtos;
+using InternManagement.Api.Helpers;
 using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
 
 namespace InternManagement.Api.Services
 {
-  public class InternService : IInternService
-  {
-    private readonly IInternRepository _repository;
-    private readonly IMapper _mapper;
-
-    public InternService(IInternRepository repository, IMapper mapper)
+    public class InternService : IInternService
     {
-      this._repository = repository;
-      this._mapper = mapper;
-    }
+        private readonly IInternRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IPrintHelper _print;
 
-    public async Task<InternDto> AddInternAsync(InternDto dto)
-    {
-      var intern = await _repository.AddInternAsync(_mapper.Map<Intern>(dto));
-      dto.Id = intern.Id;
-      return dto;
-    }
+        public InternService(IInternRepository repository, IMapper mapper, IPrintHelper print)
+        {
+            this._repository = repository;
+            this._mapper = mapper;
+            this._print = print;
+        }
 
-    public async Task<InternDto> GetInternByIdAsync(int id)
-    {
-      if (await _repository.InternExistsAsync(id))
-      {
-        var intern = await _repository.GetInternAsync(id);
-        return _mapper.Map<InternDto>(intern);
-      }
-      return null;
-    }
+        public async Task<InternDto> AddInternAsync(InternDto dto)
+        {
+            var intern = await _repository.AddInternAsync(_mapper.Map<Intern>(dto));
+            dto.Id = intern.Id;
+            return dto;
+        }
 
-    public async Task<IEnumerable<InternListItemDto>> GetInternsAsync()
-    {
-      var interns = await _repository.GetInternsAsync();
+        public async Task<InternDto> GetInternByIdAsync(int id)
+        {
+            if (await _repository.InternExistsAsync(id))
+            {
+                var intern = await _repository.GetInternAsync(id);
+                return _mapper.Map<InternDto>(intern);
+            }
+            return null;
+        }
 
-      var dtos = _mapper.Map<IEnumerable<InternListItemDto>>(interns);
+        public async Task<IEnumerable<InternListItemDto>> GetInternsAsync()
+        {
+            var interns = await _repository.GetInternsAsync();
 
-      return dtos;
-    }
+            var dtos = _mapper.Map<IEnumerable<InternListItemDto>>(interns);
 
-    public async Task<bool> SetDecisionAsync(DecisionFormDto dto)
-    {
-      var model = _mapper.Map<Decision>(dto);
-      return await _repository.SetDecisionForIntern(dto.InternId, model);
+            return dtos;
+        }
+        public async Task<DecisionDto> PrintDecisionAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateDecision = _print.PrintDecision(intern.Gender);
+                var decisiondto = _mapper.Map<DecisionDto>(intern);
+                decisiondto.Template = templateDecision;
+                return decisiondto;
+            }
+            return null;
+        }
+        public async Task<AttestationDto> PrintAttestationAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateAttestation = _print.PrintCertificate(intern.Gender);
+                var attestationdto = _mapper.Map<AttestationDto>(intern);
+                attestationdto.Template = templateAttestation;
+                return attestationdto;
+            }
+            return null;
+        }
+        public async Task<AnnulationDto> PrintAnnulationAsync(int id)
+        {
+            var intern = await _repository.GetInternAsync(id);
+            if (intern != null)
+            {
+                var templateAnnulation = _print.PrintCancel(intern.Gender);
+                var annulationdto = _mapper.Map<AnnulationDto>(intern);
+                annulationdto.Template = templateAnnulation;
+                return annulationdto;
+            }
+            return null;
+        }
+        public async Task<bool> SetDecisionAsync(DecisionFormDto dto)
+        {
+            var model = _mapper.Map<Decision>(dto);
+            return await _repository.SetDecisionForIntern(dto.InternId, model);
+        }
     }
 
     public async Task<bool> SetAttestationAsync(AttestationFormDto dto)
