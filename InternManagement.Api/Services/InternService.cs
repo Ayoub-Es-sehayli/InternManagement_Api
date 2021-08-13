@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using InternManagement.Api.Dtos;
+using InternManagement.Api.Enums;
 using InternManagement.Api.Helpers;
 using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
@@ -71,13 +72,39 @@ namespace InternManagement.Api.Services
       }
       return null;
     }
-    public async Task<AnnulationDto> PrintAnnulationAsync(int id)
+    public async Task<AnnulationDto> PrintAnnulationAsync(int id, AnnulationReasonsDto reasons)
     {
       var intern = await _repository.GetInternAsync(id);
       if (intern != null)
       {
         var templateAnnulation = _print.PrintCancel(intern.Gender);
         var annulationdto = _mapper.Map<AnnulationDto>(intern);
+        var genderModifier = intern.Gender == eGender.Female ? "e" : "";
+
+        annulationdto.Absence =
+          "<br /> -Vu le nombre d’absence injustifiées de l’intéressé" + genderModifier;
+        annulationdto.Contact =
+          "<br /> -Vu l’appel téléphonique de l’intéressé" + genderModifier
+          + " stipulant l’annulation du stage.";
+
+        if (reasons.Absence && reasons.Contact)
+        {
+          annulationdto.Absence += ";";
+        }
+        else if (reasons.Absence)
+        {
+          annulationdto.Absence += ".";
+          annulationdto.Contact = "";
+        }
+        else if (reasons.Contact)
+        {
+          annulationdto.Absence = "";
+        }
+        else
+        {
+          annulationdto.Absence = "";
+          annulationdto.Contact = "";
+        }
         annulationdto.Template = templateAnnulation;
         return annulationdto;
       }

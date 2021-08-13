@@ -1,10 +1,7 @@
 doctype html
 html
-   head 
-      link(href='https://allfont.net/allfont.css?fonts=bookman-old-style' rel='stylesheet' type='text/css')
-   -const bodyStyles = {"font-family": "Bookman Old Style"}
-   body(style = bodyStyles)
-      -const texteStyles = { "padding": "50px", "margin": "auto",}
+   body
+      -const texteStyles = { "margin-top": "100px"}
       div(style = texteStyles)
          p SAO RSK/DOCH/DtRH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/#{currentYear} 
          -const titleStyles1 = {"text-align": "center", "margin-top": "90px"}
@@ -14,10 +11,8 @@ html
             div 
                -const paragraph1Styles = { "margin-bottom": "50px"}
                p(style = paragraph1Styles) Le Directeur Général d’Al Omrane Rabat-Salé-Kenitra ;
-                     <br> -Vu la demande formulée par l’intéressée ;
-                     <br> -Vu la décision de stage N #{decisionCode} établie en date du #{decisionDate} ;
-                     <br> -Vu le nombre d’absence injustifiées de l’intéressée ;
-                     <br> -Vu l’appel téléphonique de l’intéressée stipulant l’annulation du stage.
+                  <br> -Vu la demande formulée par l’intéressée ;
+                  <br> -Vu la décision de stage N #{decisionCode} établie en date du #{decisionDate} ; !{absenceReason} !{internContact}
 
             -const titleStyles2  = {"text-align": "center", "margin-top": "50px"}
             div(style = titleStyles2 )
