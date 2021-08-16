@@ -4,8 +4,9 @@ using InternManagement.Api.Dtos;
 
 namespace InternManagement.Api.Services
 {
-    public interface IPreferencesService
-    {
-        Task<PreferencesDto> EditPreferencesAync(PreferencesDto dto);
-    }
+  public interface IPreferencesService
+  {
+    Task<PreferencesDto> EditPreferencesAync(PreferencesDto dto);
+    Task<PreferencesDto> GetPreferencesAsync();
+  }
 }

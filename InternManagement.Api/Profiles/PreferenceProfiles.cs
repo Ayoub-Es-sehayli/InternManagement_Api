@@ -5,12 +5,13 @@ using InternManagement.Api.Models;
 
 namespace InternManagement.Api.Profiles
 {
-    public class PreferenceProfile : Profile
+  public class PreferenceProfile : Profile
+  {
+    public PreferenceProfile()
     {
-        public PreferenceProfile()
-        {
-            CreateMap<PreferencesDto, Preferences>();
-            CreateMap<Preferences, PreferencesDto>();
-        }
+      CreateMap<PreferencesDto, Preferences>()
+          .ForMember(p => p.Id, opt => opt.MapFrom(pdto => 1));
+      CreateMap<Preferences, PreferencesDto>();
     }
+  }
 }
