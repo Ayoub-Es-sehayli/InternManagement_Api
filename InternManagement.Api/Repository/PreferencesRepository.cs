@@ -1,31 +1,27 @@
 using System.Threading.Tasks;
 using InternManagement.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternManagement.Api.Repository
 {
-    public class PreferencesRepository : IPreferencesRepository
+  public class PreferencesRepository : IPreferencesRepository
+  {
+    private readonly InternContext _context;
+    public PreferencesRepository(InternContext context)
     {
-        private readonly InternContext _context;
-        public PreferencesRepository(InternContext context)
-        {
-            _context = context;
-        }
-        public async Task<Preferences> EditPreferencesAsync(Preferences config)
-        {
-            var result = new Preferences
-            {
-                nInterns = 0,
-                nAttendanceDays = 0
-            };
-            result.nInterns = config.nInterns;
-            result.nAttendanceDays = config.nAttendanceDays;
-            _context.Preferences.Update(result);
-            await SaveChangesAsync();
-            return result;
-        }
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
+      _context = context;
     }
+    public async Task<Preferences> EditPreferencesAsync(Preferences config)
+    {
+      _context.Preferences.Update(config);
+      await _context.SaveChangesAsync();
+      return config;
+    }
+
+    public async Task<Preferences> GetPreferencesAsync()
+    {
+      var model = await _context.Preferences.FirstOrDefaultAsync();
+      return model;
+    }
+  }
 }

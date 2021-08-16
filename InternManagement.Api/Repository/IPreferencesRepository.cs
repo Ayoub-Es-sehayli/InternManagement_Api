@@ -3,9 +3,9 @@ using InternManagement.Api.Models;
 
 namespace InternManagement.Api.Repository
 {
-    public interface IPreferencesRepository
-    {
-        Task<Preferences> EditPreferencesAsync(Preferences config);
-        Task SaveChangesAsync();
-    }
+  public interface IPreferencesRepository
+  {
+    Task<Preferences> EditPreferencesAsync(Preferences config);
+    Task<Preferences> GetPreferencesAsync();
+  }
 }
