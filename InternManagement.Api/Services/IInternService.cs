@@ -15,5 +15,6 @@ namespace InternManagement.Api.Services
     Task<AnnulationDto> PrintAnnulationAsync(int id, AnnulationReasonsDto reasons);
     Task<bool> SetAttestationAsync(AttestationFormDto dto);
     Task<bool> SetDecisionAsync(DecisionFormDto dto);
+    Task<bool> SetCancellationAsync(CancellationFormDto dto);
   }
 }

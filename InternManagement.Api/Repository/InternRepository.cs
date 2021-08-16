@@ -155,5 +155,24 @@ namespace InternManagement.Api.Repository
       }
       return false;
     }
+
+    public async Task<bool> SetCancellationForIntern(int id, Cancellation cancellation)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        var intern = await this.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await _context.AddAsync(cancellation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+      }
+      return false;
+    }
   }
 }

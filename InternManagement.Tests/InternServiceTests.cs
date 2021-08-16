@@ -293,5 +293,28 @@ namespace InternManagement.Tests
 
       Assert.True(result);
     }
+    [Fact]
+    public async Task SetCancellationAsync_ReturnsTrue()
+    {
+      var dto = new CancellationFormDto
+      {
+        InternId = 4,
+        Code = "",
+        Date = new DateTime()
+      };
+      var model = new Cancellation
+      {
+        Id = dto.InternId
+      };
+
+      mapper.Setup(map => map.Map<Cancellation>(dto)).Returns(model);
+      internRepositoryStub.Setup(repo => repo.SetCancellationForIntern(dto.InternId, model).Result).Returns(true);
+
+      var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
+
+      var result = await service.SetCancellationAsync(dto);
+
+      Assert.True(result);
+    }
   }
 }

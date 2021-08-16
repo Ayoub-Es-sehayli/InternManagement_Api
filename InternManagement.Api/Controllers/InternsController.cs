@@ -78,5 +78,22 @@ namespace InternManagement.Api.Controllers
 
       return BadRequest();
     }
+
+    [HttpPost]
+    [Route("annulation/{id}")]
+    public async Task<ActionResult> SetCancellation(CancellationFormDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.SetCancellationAsync(dto);
+
+      if (result)
+      { return Ok(); }
+
+      return BadRequest();
+    }
   }
 }

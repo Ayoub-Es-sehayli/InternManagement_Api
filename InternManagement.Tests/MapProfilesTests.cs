@@ -247,5 +247,33 @@ namespace InternManagement.Tests
       Assert.Equal(model.Id, result.Id);
       Assert.Equal(model.Date, result.Date);
     }
+
+    [Fact]
+    public void MapCancellation_FromDto_ReturnsModel()
+    {
+      var config = new MapperConfiguration(cfg => cfg.AddProfile<DocumentsProfile>());
+      var mapper = config.CreateMapper();
+      var currentDate = DateTime.Today;
+      var id = 101;
+      var model = new Cancellation
+      {
+        Id = id,
+        InternId = id,
+        Code = "2054/2021",
+        Date = currentDate
+      };
+      var dto = new CancellationFormDto
+      {
+        InternId = id,
+        Code = model.Code,
+        Date = model.Date
+      };
+
+      var result = mapper.Map<Cancellation>(dto);
+
+      Assert.Matches(model.Code, result.Code);
+      Assert.Equal(model.Id, result.Id);
+      Assert.Equal(model.Date, result.Date);
+    }
   }
 }

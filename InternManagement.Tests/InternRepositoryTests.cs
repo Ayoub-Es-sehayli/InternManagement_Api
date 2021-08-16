@@ -372,5 +372,104 @@ namespace InternManagement.Tests
       Assert.NotNull(updated.Attestation);
       Assert.NotEqual(eInternState.FileClosed, updated.State);
     }
+
+    [Fact]
+    public async Task SetCancellationDetails_AddsCancellation()
+    {
+      var id = 207;
+      var currentTime = DateTime.Today;
+      var cancellation = new Cancellation
+      {
+        Id = id,
+        InternId = id,
+        Date = currentTime
+      };
+
+      var model = new Intern
+      {
+        Id = id,
+        State = eInternState.AssignedDecision,
+        Documents = new Documents
+        {
+          Id = id
+        },
+        DivisionId = 25
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await context.AddAsync(cancellation);
+            // ! return true;
+            break;
+        }
+        await context.SaveChangesAsync();
+      }
+
+      var updated = await context.Interns.Where(i => i.Id == id).FirstOrDefaultAsync();
+
+      Assert.NotNull(updated);
+      Assert.NotNull(updated.Cancellation);
+      Assert.Equal(eInternState.Cancelled, updated.State);
+    }
+
+    [Fact]
+    public async Task SetCancellationDetails_WithImproperState_DoesntChangeState()
+    {
+      var id = 213;
+      var currentTime = DateTime.Today;
+      var cancellation = new Cancellation
+      {
+        Id = id,
+        InternId = id,
+        Code = "5488",
+        Date = currentTime
+      };
+
+      var model = new Intern
+      {
+        Id = id,
+        State = eInternState.ApplicationFilled,
+        Documents = new Documents
+        {
+          Id = id
+        },
+        DivisionId = 25
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await context.AddAsync(cancellation);
+            // ! return true;
+            break;
+        }
+        await context.SaveChangesAsync();
+      }
+
+      var updated = await context.Interns.Where(i => i.Id == id).FirstOrDefaultAsync();
+
+      Assert.NotNull(updated);
+      Assert.Null(updated.Cancellation);
+      Assert.NotEqual(eInternState.Cancelled, updated.State);
+    }
   }
 }

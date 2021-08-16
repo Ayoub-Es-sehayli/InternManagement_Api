@@ -122,5 +122,11 @@ namespace InternManagement.Api.Services
       var model = _mapper.Map<Attestation>(dto);
       return await _repository.SetAttestationForIntern(dto.InternId, model);
     }
+
+    public async Task<bool> SetCancellationAsync(CancellationFormDto dto)
+    {
+      var model = _mapper.Map<Cancellation>(dto);
+      return await _repository.SetCancellationForIntern(dto.InternId, model);
+    }
   }
 }
