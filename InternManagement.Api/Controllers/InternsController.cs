@@ -61,5 +61,22 @@ namespace InternManagement.Api.Controllers
       }
       return BadRequest();
     }
+
+    [HttpPost]
+    [Route("attestation/{id}")]
+    public async Task<ActionResult> SetAttestation(AttestationFormDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.SetAttestationAsync(dto);
+
+      if (result)
+      { return Ok(); }
+
+      return BadRequest();
+    }
   }
 }

@@ -101,7 +101,6 @@ namespace InternManagement.Api.Repository
         Decision = intern.Decision,
         State = intern.State
       })
-      .Where(intern => intern.State != eInternState.FileClosed)
       .ToListAsync();
     }
 
@@ -125,8 +124,6 @@ namespace InternManagement.Api.Repository
           case eInternState.AssignedDecision:
             intern.State = eInternState.AssignedDecision;
             break;
-          default:
-            break;
         }
         await SaveChangesAsync();
         return true;
@@ -145,13 +142,15 @@ namespace InternManagement.Api.Repository
           {
             await _context.AddAsync(attestation);
           }
-          switch (intern.State)
+          else
           {
-            case eInternState.Finished:
-              intern.State = eInternState.FileClosed;
-              break;
+            intern.Attestation = attestation;
           }
+
+          intern.State = eInternState.FileClosed;
+
           await _context.SaveChangesAsync();
+          return true;
         }
       }
       return false;
