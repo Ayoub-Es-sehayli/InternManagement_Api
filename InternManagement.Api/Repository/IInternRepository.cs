@@ -9,6 +9,7 @@ namespace InternManagement.Api.Repository
     Task<Intern> AddInternAsync(Intern model);
     Task<bool> InternExistsAsync(int id);
     Task<Intern> GetInternAsync(int id);
+    Task<Intern> GetInternWithAttendanceAndDivision(int id);
     Task<Intern> GetInternWithDecision(int id);
     Task<Intern> GetInternWithDepartment(int id);
     Task<Intern> GetInternWithDepartmentAndLocation(int id);

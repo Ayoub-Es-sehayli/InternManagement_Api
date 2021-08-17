@@ -27,16 +27,23 @@ namespace InternManagement.Api.Repository
     public async Task<Intern> GetInternAsync(int id)
     {
       var intern = await _context.Interns
-      .Include(i => i.Division)
-        .ThenInclude(d => d.Department)
-          .ThenInclude(d => d.Location)
-      .Include(i => i.Decision)
-      .Include(i => i.Attendance)
       .Where(i => i.Id == id)
       .FirstOrDefaultAsync();
       return intern;
     }
 
+    public async Task<Intern> GetInternWithAttendanceAndDivision(int id)
+    {
+      var intern = await this.GetInternAsync(id);
+      if (intern != null)
+      {
+        await _context.Entry(intern).Collection(i => i.Attendance).LoadAsync();
+        await _context.Entry(intern).Navigation("Documents").LoadAsync();
+        await _context.Entry(intern).Navigation("Division").LoadAsync();
+        await _context.Entry(intern).Navigation("Decision").LoadAsync();
+      }
+      return intern;
+    }
 
     public async Task<Intern> GetInternWithDecision(int id)
     {

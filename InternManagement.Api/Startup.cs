@@ -95,7 +95,6 @@ namespace InternManagement.Api
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InternManagement.Api v1"));
       }
 
-
       app.UseRouting();
 
       app.UseCors();

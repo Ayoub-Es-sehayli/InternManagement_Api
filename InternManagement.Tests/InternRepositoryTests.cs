@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,16 +96,6 @@ namespace InternManagement.Tests
     {
       var result = await repository.InternExistsAsync(3001);
       Assert.False(result);
-    }
-
-    [Fact]
-    public async Task GetInternAsync_WithProperId_ReturnsIntern()
-    {
-      var latestId = 4;
-      var intern = await repository.GetInternWithAttendanceAndDivision(latestId);
-      Assert.NotNull(intern);
-      Assert.NotEmpty(intern.Attendance);
-      Assert.NotNull(intern.Division);
     }
 
     [Fact]
@@ -470,6 +461,39 @@ namespace InternManagement.Tests
       Assert.NotNull(updated);
       Assert.Null(updated.Cancellation);
       Assert.NotEqual(eInternState.Cancelled, updated.State);
+    }
+
+    [Fact]
+    public async Task GetInternWithAttendanceAndDivisionAsync_WithProperId_ReturnsModel()
+    {
+      var id = 401;
+      var currentDate = DateTime.Now;
+
+      var model = new Intern
+      {
+        Id = id,
+        DivisionId = 22,
+        State = eInternState.Started,
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Letter = eDocumentState.Missing,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing,
+          Convention = eDocumentState.Missing,
+        }
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      var result = await repository.GetInternWithAttendanceAndDivision(id);
+
+      Assert.NotNull(result);
+      Assert.NotNull(result.Division);
+      Assert.NotNull(result.Attendance);
+      Assert.NotNull(result.Documents);
     }
   }
 }

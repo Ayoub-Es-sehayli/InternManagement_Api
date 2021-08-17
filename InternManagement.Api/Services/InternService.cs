@@ -128,5 +128,11 @@ namespace InternManagement.Api.Services
       var model = _mapper.Map<Cancellation>(dto);
       return await _repository.SetCancellationForIntern(dto.InternId, model);
     }
+
+    public async Task<InternInfoDto> GetInternInfoByIdAsync(int id)
+    {
+      var intern = await _repository.GetInternWithAttendanceAndDivision(id);
+      return _mapper.Map<InternInfoDto>(intern);
+    }
   }
 }

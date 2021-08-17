@@ -275,5 +275,191 @@ namespace InternManagement.Tests
       Assert.Equal(model.Id, result.Id);
       Assert.Equal(model.Date, result.Date);
     }
+
+    [Fact]
+    public void MapAbsentDaysDto_ReturnsDto()
+    {
+      var config = new MapperConfiguration(cfg => cfg.AddProfile<InternProfile>());
+      var mapper = config.CreateMapper();
+      var currentDate = DateTime.Today;
+      var models = new List<Attendance>
+        {
+          new Attendance
+          {
+            date = currentDate.Date,
+            time = currentDate,
+            Type = eAttendanceType.Enter
+          },
+          new Attendance
+          {
+            date = currentDate.Date,
+            time = currentDate,
+            Type = eAttendanceType.Exit
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(1),
+            time = currentDate.Date.AddDays(1),
+            Type = eAttendanceType.Enter
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(1),
+            time = currentDate.Date.AddDays(1),
+            Type = eAttendanceType.Exit
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(2),
+            time = currentDate.Date.AddDays(2),
+            Type = eAttendanceType.Absent
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(3),
+            time = currentDate.Date.AddDays(3),
+            Type = eAttendanceType.Enter
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(3),
+            time = currentDate.Date.AddDays(3),
+            Type = eAttendanceType.Exit
+          },
+          new Attendance
+          {
+            date = currentDate.Date.AddDays(4),
+            time = currentDate.Date.AddDays(4),
+            Type = eAttendanceType.Absent
+          },
+        };
+      var dto = new List<AttendanceDayDto>
+      {
+        new AttendanceDayDto
+          {
+            Date = currentDate.Date,
+            Type = "is-info"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date,
+            Type = "is-warn"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(1),
+            Type = "is-info"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(1),
+            Type = "is-warn"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(2),
+            Type = "is-danger"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(3),
+            Type = "is-info"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(3),
+            Type = "is-warn"
+          },
+          new AttendanceDayDto
+          {
+            Date = currentDate.Date.AddDays(4),
+            Type = "is-danger"
+          },
+      };
+
+      var result = mapper.Map<List<AttendanceDayDto>>(models);
+
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+      for (int i = 0; i < dto.Count; i++)
+      {
+        Assert.Equal(dto[i].Date, result[i].Date);
+        Assert.Matches(dto[i].Type, result[i].Type);
+      }
+    }
+
+    [Fact]
+    public void MapInternInfoDto_ReturnsDto()
+    {
+      var config = new MapperConfiguration(cfg =>
+      {
+        cfg.AddProfile<InternProfile>();
+        cfg.AddProfile<DocumentsProfile>();
+      });
+      var mapper = config.CreateMapper();
+      var currentDate = DateTime.Today;
+      var id = 101;
+
+      var model = new Intern
+      {
+        Id = id,
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        StartDate = DateTime.Today,
+        EndDate = DateTime.Today.AddMonths(3),
+        DivisionId = 22,
+        State = eInternState.Started,
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Report = eDocumentState.Invalid,
+          EvaluationForm = eDocumentState.Missing,
+          Convention = eDocumentState.Unrequired,
+        },
+        Decision = new Decision
+        {
+          Code = "8457",
+          Date = currentDate
+        },
+        Division = new Division
+        {
+          Id = 22,
+          Name = "Division Gestion Administrative et paie"
+        },
+        Attendance = new List<Attendance>()
+      };
+
+      var dto = new InternInfoDto
+      {
+        Id = model.Id,
+        FullName = model.FirstName + " " + model.LastName,
+        Decision = model.Decision.Code + "/" + model.Decision.Date.Year,
+        Division = model.Division.Name,
+        Email = model.Email,
+        Phone = model.Phone,
+        StartDate = model.StartDate,
+        EndDate = model.EndDate,
+        Documents = new List<eDocumentState>
+        {
+          eDocumentState.Submitted,
+          eDocumentState.Submitted,
+          eDocumentState.Submitted,
+          eDocumentState.Unrequired,
+          eDocumentState.Invalid,
+          eDocumentState.Missing,
+        },
+        AttendanceDays = new List<AttendanceDayDto>()
+      };
+
+      var result = mapper.Map<InternInfoDto>(model);
+
+      Assert.Matches(dto.FullName, result.FullName);
+      Assert.Matches(dto.Division, result.Division);
+      Assert.Matches(dto.Decision, result.Decision);
+      Assert.Equal(dto.AttendanceDays.Count, result.AttendanceDays.Count);
+      Assert.Equal(dto.Documents.Count, result.Documents.Count);
+    }
   }
 }

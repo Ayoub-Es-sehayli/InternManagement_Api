@@ -8,6 +8,7 @@ namespace InternManagement.Api.Services
   {
     Task<InternDto> AddInternAsync(InternDto dto);
     Task<InternDto> GetInternByIdAsync(int id);
+    Task<InternInfoDto> GetInternInfoByIdAsync(int id);
 
     Task<IEnumerable<InternListItemDto>> GetInternsAsync();
     Task<DecisionDto> PrintDecisionAsync(int id);

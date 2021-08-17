@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using InternManagement.Api.Dtos;
 using InternManagement.Api.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternManagement.Api.Controllers
@@ -16,6 +15,17 @@ namespace InternManagement.Api.Controllers
     public InternsController(IInternService service)
     {
       this._service = service;
+    }
+    [HttpGet]
+    [Route("info/{id}")]
+    public async Task<ActionResult<InternInfoDto>> GetInternInfo(int Id)
+    {
+      var intern = await _service.GetInternInfoByIdAsync(Id);
+      if (intern == null)
+      {
+        return NotFound();
+      }
+      return intern;
     }
 
     [HttpGet]
