@@ -134,5 +134,11 @@ namespace InternManagement.Api.Services
       var intern = await _repository.GetInternWithAttendanceAndDivision(id);
       return _mapper.Map<InternInfoDto>(intern);
     }
+
+    public async Task<bool> UpdateInternAsync(int id, InternDto dto)
+    {
+      var intern = _mapper.Map<Intern>(dto);
+      return await _repository.UpdateInternAsync(id, intern);
+    }
   }
 }

@@ -196,7 +196,7 @@ namespace InternManagement.Tests
       var intern = new Intern { };
       var decisiondto = new DecisionDto { };
 
-      internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
+      internRepositoryStub.Setup(repo => repo.GetInternWithDepartment(id).Result).Returns(intern);
       mapper.Setup(map => map.Map<DecisionDto>(intern)).Returns(decisiondto);
 
 
@@ -213,7 +213,7 @@ namespace InternManagement.Tests
       var intern = new Intern { };
       var attestationDto = new AttestationDto { };
 
-      internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
+      internRepositoryStub.Setup(repo => repo.GetInternWithDepartmentAndLocation(id).Result).Returns(intern);
       mapper.Setup(map => map.Map<AttestationDto>(intern)).Returns(attestationDto);
 
 
@@ -226,12 +226,12 @@ namespace InternManagement.Tests
     public async Task PrintAnnulation_ProperData_ReturnsAnnulationDto()
     {
       var id = 99;
-      var intern = new Intern { };
+      var intern = new Intern { Gender = eGender.Male };
       var annulationDto = new AnnulationDto { };
       var reasons = new AnnulationReasonsDto { };
-      internRepositoryStub.Setup(repo => repo.GetInternAsync(id).Result).Returns(intern);
+      internRepositoryStub.Setup(repo => repo.GetInternWithDecision(id).Result).Returns(intern);
       mapper.Setup(map => map.Map<AnnulationDto>(intern)).Returns(annulationDto);
-
+      print.Setup(p => p.PrintCancel(intern.Gender)).Returns("");
 
       var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
       var result = await service.PrintAnnulationAsync(id, reasons);
@@ -314,6 +314,24 @@ namespace InternManagement.Tests
 
       var result = await service.SetCancellationAsync(dto);
 
+      Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateInternAsync_ReturnsTrue()
+    {
+      var id = 1;
+      var dto = new InternDto();
+      var model = new Intern();
+
+      mapper.Setup(map => map.Map<Intern>(dto)).Returns(model);
+      internRepositoryStub.Setup(repo => repo.UpdateInternAsync(id, model).Result).Returns(true);
+
+      var service = new InternService(internRepositoryStub.Object, mapper.Object, print.Object);
+
+      var result = await service.UpdateInternAsync(id, dto);
+
+      Assert.NotNull(result);
       Assert.True(result);
     }
   }

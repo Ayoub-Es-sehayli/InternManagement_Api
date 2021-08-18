@@ -29,6 +29,8 @@ namespace InternManagement.Api.Repository
       var intern = await _context.Interns
       .Where(i => i.Id == id)
       .FirstOrDefaultAsync();
+      if (intern != null)
+      { await _context.Entry(intern).Navigation("Documents").LoadAsync(); }
       return intern;
     }
 
@@ -38,7 +40,6 @@ namespace InternManagement.Api.Repository
       if (intern != null)
       {
         await _context.Entry(intern).Collection(i => i.Attendance).LoadAsync();
-        await _context.Entry(intern).Navigation("Documents").LoadAsync();
         await _context.Entry(intern).Navigation("Division").LoadAsync();
         await _context.Entry(intern).Navigation("Decision").LoadAsync();
       }
@@ -178,6 +179,17 @@ namespace InternManagement.Api.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+      }
+      return false;
+    }
+
+    public async Task<bool> UpdateInternAsync(int id, Intern model)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        _context.Update(model);
+        await _context.SaveChangesAsync();
+        return true;
       }
       return false;
     }

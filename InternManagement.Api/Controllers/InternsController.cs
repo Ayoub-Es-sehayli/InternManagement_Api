@@ -105,5 +105,22 @@ namespace InternManagement.Api.Controllers
 
       return BadRequest();
     }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<ActionResult> UpdateIntern(int id, InternDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.UpdateInternAsync(id, dto);
+
+      if (result)
+      { return Ok(); }
+
+      return BadRequest();
+    }
   }
 }

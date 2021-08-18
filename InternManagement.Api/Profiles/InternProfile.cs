@@ -11,7 +11,16 @@ namespace InternManagement.Api.Profiles
     public InternProfile()
     {
       CreateMap<InternDto, Intern>();
-      CreateMap<Intern, InternDto>();
+      CreateMap<Intern, InternDto>()
+        .ForMember(dto => dto.Documents, opt => opt.MapFrom(intern => new List<eDocumentState>
+        {
+          intern.Documents.CV,
+          intern.Documents.Letter,
+          intern.Documents.Insurance,
+          intern.Documents.Convention,
+          intern.Documents.Report,
+          intern.Documents.EvaluationForm
+        }));
 
       CreateMap<Attendance, AttendanceDayDto>()
         .ForMember(dto => dto.Date, opt => opt.MapFrom(a => a.time))

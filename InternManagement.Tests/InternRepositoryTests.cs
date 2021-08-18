@@ -495,5 +495,84 @@ namespace InternManagement.Tests
       Assert.NotNull(result.Attendance);
       Assert.NotNull(result.Documents);
     }
+
+    [Fact]
+    public async Task UpdateInternAsync_WithImproperId_ReturnsFalse()
+    {
+      var id = 1001;
+
+      var result = await repository.UpdateInternAsync(id, null);
+
+      Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UpdateInternAsync_WithProperId_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today;
+      var newDate = currentDate.AddMonths(1);
+      var model = new Intern
+      {
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        StartDate = currentDate,
+        EndDate = currentDate.AddMonths(3),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Unrequired,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing
+        },
+        DivisionId = 19,
+        Responsable = "Chef Division RH",
+        Phone = "0684257193",
+        Email = "m.hariss@contoso.com"
+      };
+      var id = (await repository.AddInternAsync(model)).Id;
+
+      var input = new Intern
+      {
+        Id = id,
+        FirstName = "Khaoula",
+        LastName = "Tijani",
+        StartDate = newDate,
+        EndDate = newDate.AddMonths(3),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Unrequired,
+          Report = eDocumentState.Invalid,
+          EvaluationForm = eDocumentState.Submitted
+        },
+        DivisionId = 19,
+        Responsable = "Chef Division Systèmes d'Information",
+        Phone = "06900623",
+        Email = "kh.tijani@outlook.com"
+      };
+      context.Entry(model).State = EntityState.Detached;
+      var result = await repository.UpdateInternAsync(id, input);
+
+      Assert.True(result);
+
+      var updated = await repository.GetInternAsync(id);
+      Assert.Matches(input.FirstName, updated.FirstName);
+      Assert.Matches(input.LastName, updated.LastName);
+      Assert.Matches(input.Email, updated.Email);
+      Assert.Matches(input.Phone, updated.Phone);
+      Assert.Matches(input.Responsable, updated.Responsable);
+      Assert.Equal(input.StartDate, updated.StartDate);
+      Assert.Equal(input.EndDate, updated.EndDate);
+      Assert.Equal(input.Documents.CV, updated.Documents.CV);
+      Assert.Equal(input.Documents.Letter, updated.Documents.Letter);
+      Assert.Equal(input.Documents.Insurance, updated.Documents.Insurance);
+      Assert.Equal(input.Documents.Convention, updated.Documents.Convention);
+      Assert.Equal(input.Documents.Report, updated.Documents.Report);
+      Assert.Equal(input.Documents.EvaluationForm, updated.Documents.EvaluationForm);
+    }
   }
 }
