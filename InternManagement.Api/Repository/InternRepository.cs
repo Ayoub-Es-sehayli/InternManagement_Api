@@ -187,6 +187,7 @@ namespace InternManagement.Api.Repository
     {
       if (await this.InternExistsAsync(id))
       {
+        model.State = await _context.Interns.Where(x => x.Id == id).Select(x => x.State).SingleOrDefaultAsync();
         _context.Update(model);
         await _context.SaveChangesAsync();
         return true;
