@@ -22,6 +22,8 @@ namespace InternManagement.Api.Profiles
         .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.InternId));
       CreateMap<AttestationFormDto, Attestation>()
         .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.InternId));
+      CreateMap<CancellationFormDto, Cancellation>()
+      .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.InternId));
     }
   }
 }

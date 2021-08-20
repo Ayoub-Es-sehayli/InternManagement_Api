@@ -8,6 +8,7 @@ namespace InternManagement.Api.Services
   {
     Task<InternDto> AddInternAsync(InternDto dto);
     Task<InternDto> GetInternByIdAsync(int id);
+    Task<InternInfoDto> GetInternInfoByIdAsync(int id);
 
     Task<IEnumerable<InternListItemDto>> GetInternsAsync();
     Task<DecisionDto> PrintDecisionAsync(int id);
@@ -15,5 +16,7 @@ namespace InternManagement.Api.Services
     Task<AnnulationDto> PrintAnnulationAsync(int id, AnnulationReasonsDto reasons);
     Task<bool> SetAttestationAsync(AttestationFormDto dto);
     Task<bool> SetDecisionAsync(DecisionFormDto dto);
+    Task<bool> SetCancellationAsync(CancellationFormDto dto);
+    Task<bool> UpdateInternAsync(int id, InternDto dto);
   }
 }

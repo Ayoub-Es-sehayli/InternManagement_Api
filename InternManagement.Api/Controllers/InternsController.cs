@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using InternManagement.Api.Dtos;
 using InternManagement.Api.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternManagement.Api.Controllers
@@ -17,6 +16,17 @@ namespace InternManagement.Api.Controllers
     {
       this._service = service;
     }
+    [HttpGet]
+    [Route("info/{id}")]
+    public async Task<ActionResult<InternInfoDto>> GetInternInfo(int Id)
+    {
+      var intern = await _service.GetInternInfoByIdAsync(Id);
+      if (intern == null)
+      {
+        return NotFound();
+      }
+      return Json(intern);
+    }
 
     [HttpGet]
     [Route("{id}")]
@@ -27,7 +37,7 @@ namespace InternManagement.Api.Controllers
       {
         return NotFound();
       }
-      return intern;
+      return Json(intern);
     }
 
     [HttpPost]
@@ -43,7 +53,7 @@ namespace InternManagement.Api.Controllers
     {
       var dtos = await _service.GetInternsAsync();
 
-      return Ok(dtos);
+      return Json(dtos);
     }
 
     [HttpPost]
@@ -59,6 +69,57 @@ namespace InternManagement.Api.Controllers
       {
         return Ok();
       }
+      return BadRequest();
+    }
+
+    [HttpPost]
+    [Route("attestation/{id}")]
+    public async Task<ActionResult> SetAttestation(AttestationFormDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.SetAttestationAsync(dto);
+
+      if (result)
+      { return Ok(); }
+
+      return BadRequest();
+    }
+
+    [HttpPost]
+    [Route("annulation/{id}")]
+    public async Task<ActionResult> SetCancellation(CancellationFormDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.SetCancellationAsync(dto);
+
+      if (result)
+      { return Ok(); }
+
+      return BadRequest();
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<ActionResult> UpdateIntern(int id, InternDto dto)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest();
+      }
+
+      var result = await _service.UpdateInternAsync(id, dto);
+
+      if (result)
+      { return Ok(); }
+
       return BadRequest();
     }
   }

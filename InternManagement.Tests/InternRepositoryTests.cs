@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,16 +96,6 @@ namespace InternManagement.Tests
     {
       var result = await repository.InternExistsAsync(3001);
       Assert.False(result);
-    }
-
-    [Fact]
-    public async Task GetInternAsync_WithProperId_ReturnsIntern()
-    {
-      var latestId = 4;
-      var intern = await repository.GetInternWithAttendanceAndDivision(latestId);
-      Assert.NotNull(intern);
-      Assert.NotEmpty(intern.Attendance);
-      Assert.NotNull(intern.Division);
     }
 
     [Fact]
@@ -371,6 +362,255 @@ namespace InternManagement.Tests
       Assert.NotNull(updated);
       Assert.NotNull(updated.Attestation);
       Assert.NotEqual(eInternState.FileClosed, updated.State);
+    }
+
+    [Fact]
+    public async Task SetCancellationDetails_AddsCancellation()
+    {
+      var id = 207;
+      var currentTime = DateTime.Today;
+      var cancellation = new Cancellation
+      {
+        Id = id,
+        InternId = id,
+        Date = currentTime
+      };
+
+      var model = new Intern
+      {
+        Id = id,
+        State = eInternState.AssignedDecision,
+        Documents = new Documents
+        {
+          Id = id
+        },
+        DivisionId = 25
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await context.AddAsync(cancellation);
+            // ! return true;
+            break;
+        }
+        await context.SaveChangesAsync();
+      }
+
+      var updated = await context.Interns.Where(i => i.Id == id).FirstOrDefaultAsync();
+
+      Assert.NotNull(updated);
+      Assert.NotNull(updated.Cancellation);
+      Assert.Equal(eInternState.Cancelled, updated.State);
+    }
+
+    [Fact]
+    public async Task SetCancellationDetails_WithImproperState_DoesntChangeState()
+    {
+      var id = 213;
+      var currentTime = DateTime.Today;
+      var cancellation = new Cancellation
+      {
+        Id = id,
+        InternId = id,
+        Code = "5488",
+        Date = currentTime
+      };
+
+      var model = new Intern
+      {
+        Id = id,
+        State = eInternState.ApplicationFilled,
+        Documents = new Documents
+        {
+          Id = id
+        },
+        DivisionId = 25
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      if (await repository.InternExistsAsync(id))
+      {
+        var intern = await repository.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await context.AddAsync(cancellation);
+            // ! return true;
+            break;
+        }
+        await context.SaveChangesAsync();
+      }
+
+      var updated = await context.Interns.Where(i => i.Id == id).FirstOrDefaultAsync();
+
+      Assert.NotNull(updated);
+      Assert.Null(updated.Cancellation);
+      Assert.NotEqual(eInternState.Cancelled, updated.State);
+    }
+
+    [Fact]
+    public async Task GetInternWithAttendanceAndDivisionAsync_WithProperId_ReturnsModel()
+    {
+      var id = 401;
+      var currentDate = DateTime.Now;
+
+      var model = new Intern
+      {
+        Id = id,
+        DivisionId = 22,
+        State = eInternState.Started,
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Letter = eDocumentState.Missing,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing,
+          Convention = eDocumentState.Missing,
+        }
+      };
+
+      await context.Interns.AddAsync(model);
+      await context.SaveChangesAsync();
+
+      var result = await repository.GetInternWithAttendanceAndDivision(id);
+
+      Assert.NotNull(result);
+      Assert.NotNull(result.Division);
+      Assert.NotNull(result.Attendance);
+      Assert.NotNull(result.Documents);
+    }
+
+    [Fact]
+    public async Task UpdateInternAsync_WithImproperId_ReturnsFalse()
+    {
+      var id = 1001;
+
+      var result = await repository.UpdateInternAsync(id, null);
+
+      Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UpdateInternAsync_WithProperId_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today;
+      var newDate = currentDate.AddMonths(1);
+      var model = new Intern
+      {
+        FirstName = "Mohamed",
+        LastName = "Hariss",
+        StartDate = currentDate,
+        EndDate = currentDate.AddMonths(3),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Unrequired,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing
+        },
+        DivisionId = 19,
+        Responsable = "Chef Division RH",
+        Phone = "0684257193",
+        Email = "m.hariss@contoso.com"
+      };
+      var id = (await repository.AddInternAsync(model)).Id;
+
+      var input = new Intern
+      {
+        Id = id,
+        FirstName = "Khaoula",
+        LastName = "Tijani",
+        StartDate = newDate,
+        EndDate = newDate.AddMonths(3),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Unrequired,
+          Report = eDocumentState.Invalid,
+          EvaluationForm = eDocumentState.Submitted
+        },
+        DivisionId = 19,
+        Responsable = "Chef Division Systèmes d'Information",
+        Phone = "06900623",
+        Email = "kh.tijani@outlook.com"
+      };
+      context.Entry(model).State = EntityState.Detached;
+      var result = await repository.UpdateInternAsync(id, input);
+
+      Assert.True(result);
+
+      var updated = await repository.GetInternAsync(id);
+      Assert.Matches(input.FirstName, updated.FirstName);
+      Assert.Matches(input.LastName, updated.LastName);
+      Assert.Matches(input.Email, updated.Email);
+      Assert.Matches(input.Phone, updated.Phone);
+      Assert.Matches(input.Responsable, updated.Responsable);
+      Assert.Equal(input.StartDate, updated.StartDate);
+      Assert.Equal(input.EndDate, updated.EndDate);
+      Assert.Equal(input.Documents.CV, updated.Documents.CV);
+      Assert.Equal(input.Documents.Letter, updated.Documents.Letter);
+      Assert.Equal(input.Documents.Insurance, updated.Documents.Insurance);
+      Assert.Equal(input.Documents.Convention, updated.Documents.Convention);
+      Assert.Equal(input.Documents.Report, updated.Documents.Report);
+      Assert.Equal(input.Documents.EvaluationForm, updated.Documents.EvaluationForm);
+      Assert.Equal(eFileAlarmState.IncompleteFile, updated.FileAlarmState);
+    }
+
+    [Fact]
+    public async Task UpdateDocumentsForInternAsync_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today.Date;
+      var model = new Intern
+      {
+        StartDate = currentDate,
+        EndDate = currentDate.AddMonths(1),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Submitted,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing
+        },
+        FileAlarmState = eFileAlarmState.None
+      };
+      var id = (await repository.AddInternAsync(model)).Id;
+
+      var reportState = eDocumentState.Invalid;
+      var evalFormState = eDocumentState.Submitted;
+
+      var result = await repository.UpdateDocumentsAsync(id, reportState, evalFormState);
+
+      Assert.True(result);
+
+      var updateIntern = (await repository.GetInternAsync(id));
+      var updated = updateIntern.Documents;
+
+      Assert.Equal(reportState, updated.Report);
+      Assert.Equal(evalFormState, updated.EvaluationForm);
+      Assert.Equal(eFileAlarmState.IncompleteFile, updateIntern.FileAlarmState);
+
     }
   }
 }

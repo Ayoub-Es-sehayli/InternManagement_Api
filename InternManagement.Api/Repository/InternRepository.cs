@@ -19,6 +19,8 @@ namespace InternManagement.Api.Repository
     {
       model.Id = await GetInternCountAsync() + 1;
       model.State = eInternState.ApplicationFilled;
+      var duration = (model.EndDate - model.StartDate).TotalDays / 30;
+      model.FileAlarmState = this.ProcessFile((int)duration, model.Documents);
       await _context.AddAsync<Intern>(model);
       await SaveChangesAsync();
       return await _context.Interns.OrderBy(intern => intern.Id).LastAsync();
@@ -27,16 +29,24 @@ namespace InternManagement.Api.Repository
     public async Task<Intern> GetInternAsync(int id)
     {
       var intern = await _context.Interns
-      .Include(i => i.Division)
-        .ThenInclude(d => d.Department)
-          .ThenInclude(d => d.Location)
-      .Include(i => i.Decision)
-      .Include(i => i.Attendance)
       .Where(i => i.Id == id)
       .FirstOrDefaultAsync();
+      if (intern != null)
+      { await _context.Entry(intern).Navigation("Documents").LoadAsync(); }
       return intern;
     }
 
+    public async Task<Intern> GetInternWithAttendanceAndDivision(int id)
+    {
+      var intern = await this.GetInternAsync(id);
+      if (intern != null)
+      {
+        await _context.Entry(intern).Collection(i => i.Attendance).LoadAsync();
+        await _context.Entry(intern).Navigation("Division").LoadAsync();
+        await _context.Entry(intern).Navigation("Decision").LoadAsync();
+      }
+      return intern;
+    }
 
     public async Task<Intern> GetInternWithDecision(int id)
     {
@@ -101,7 +111,6 @@ namespace InternManagement.Api.Repository
         Decision = intern.Decision,
         State = intern.State
       })
-      .Where(intern => intern.State != eInternState.FileClosed)
       .ToListAsync();
     }
 
@@ -110,6 +119,7 @@ namespace InternManagement.Api.Repository
       if (await this.InternExistsAsync(id))
       {
         var intern = await this.GetInternAsync(id);
+        await _context.Entry(intern).Navigation("Decision").LoadAsync();
         if (intern.Decision == null)
         {
           await _context.AddAsync<Decision>(decision);
@@ -124,8 +134,6 @@ namespace InternManagement.Api.Repository
           case eInternState.ApplicationFilled:
           case eInternState.AssignedDecision:
             intern.State = eInternState.AssignedDecision;
-            break;
-          default:
             break;
         }
         await SaveChangesAsync();
@@ -145,16 +153,83 @@ namespace InternManagement.Api.Repository
           {
             await _context.AddAsync(attestation);
           }
-          switch (intern.State)
+          else
           {
-            case eInternState.Finished:
-              intern.State = eInternState.FileClosed;
-              break;
+            intern.Attestation = attestation;
           }
+
+          intern.State = eInternState.FileClosed;
+
           await _context.SaveChangesAsync();
+          return true;
         }
       }
       return false;
+    }
+
+    public async Task<bool> SetCancellationForIntern(int id, Cancellation cancellation)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        var intern = await this.GetInternAsync(id);
+        switch (intern.State)
+        {
+          case eInternState.AssignedDecision:
+          case eInternState.Started:
+          case eInternState.Finished:
+            intern.State = eInternState.Cancelled;
+            await _context.AddAsync(cancellation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+      }
+      return false;
+    }
+
+    public async Task<bool> UpdateInternAsync(int id, Intern model)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        model.State = await _context.Interns.Where(x => x.Id == id).Select(x => x.State).SingleOrDefaultAsync();
+        var duration = (model.EndDate - model.StartDate).TotalDays / 30;
+        model.FileAlarmState = this.ProcessFile((int)duration, model.Documents);
+        _context.Update(model);
+        await _context.SaveChangesAsync();
+        return true;
+      }
+      return false;
+    }
+
+    public async Task<bool> UpdateDocumentsAsync(int id, eDocumentState reportState, eDocumentState evalFormState)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        var intern = (await this.GetInternAsync(id));
+        var duration = (intern.EndDate - intern.StartDate).TotalDays / 30;
+
+        intern.Documents.Report = reportState;
+        intern.Documents.EvaluationForm = evalFormState;
+        intern.FileAlarmState = this.ProcessFile((int)duration, intern.Documents);
+        _context.Update(intern);
+        await _context.SaveChangesAsync();
+        return true;
+      }
+
+      return false;
+    }
+    private eFileAlarmState ProcessFile(int duration, Documents documents)
+    {
+      return ((duration > 1 && documents.Convention == eDocumentState.Submitted)
+      && (documents.Report == eDocumentState.Valid)
+      && (documents.EvaluationForm == eDocumentState.Submitted)
+      && (documents.CV == eDocumentState.Submitted)
+      && (documents.Letter == eDocumentState.Submitted)
+      && (documents.Insurance == eDocumentState.Submitted))
+      ?
+         eFileAlarmState.None
+      :
+         eFileAlarmState.IncompleteFile;
+
     }
   }
 }
