@@ -25,7 +25,7 @@ namespace InternManagement.Api.Controllers
       {
         return NotFound();
       }
-      return intern;
+      return Json(intern);
     }
 
     [HttpGet]
@@ -37,7 +37,7 @@ namespace InternManagement.Api.Controllers
       {
         return NotFound();
       }
-      return intern;
+      return Json(intern);
     }
 
     [HttpPost]
@@ -53,7 +53,7 @@ namespace InternManagement.Api.Controllers
     {
       var dtos = await _service.GetInternsAsync();
 
-      return Ok(dtos);
+      return Json(dtos);
     }
 
     [HttpPost]
