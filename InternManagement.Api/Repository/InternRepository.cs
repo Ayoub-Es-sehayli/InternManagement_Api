@@ -19,6 +19,8 @@ namespace InternManagement.Api.Repository
     {
       model.Id = await GetInternCountAsync() + 1;
       model.State = eInternState.ApplicationFilled;
+      var duration = (model.EndDate - model.StartDate).TotalDays / 30;
+      model.FileAlarmState = this.ProcessFile((int)duration, model.Documents);
       await _context.AddAsync<Intern>(model);
       await SaveChangesAsync();
       return await _context.Interns.OrderBy(intern => intern.Id).LastAsync();
@@ -117,6 +119,7 @@ namespace InternManagement.Api.Repository
       if (await this.InternExistsAsync(id))
       {
         var intern = await this.GetInternAsync(id);
+        await _context.Entry(intern).Navigation("Decision").LoadAsync();
         if (intern.Decision == null)
         {
           await _context.AddAsync<Decision>(decision);
@@ -188,6 +191,8 @@ namespace InternManagement.Api.Repository
       if (await this.InternExistsAsync(id))
       {
         model.State = await _context.Interns.Where(x => x.Id == id).Select(x => x.State).SingleOrDefaultAsync();
+        var duration = (model.EndDate - model.StartDate).TotalDays / 30;
+        model.FileAlarmState = this.ProcessFile((int)duration, model.Documents);
         _context.Update(model);
         await _context.SaveChangesAsync();
         return true;
