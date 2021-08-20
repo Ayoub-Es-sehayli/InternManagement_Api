@@ -573,6 +573,44 @@ namespace InternManagement.Tests
       Assert.Equal(input.Documents.Convention, updated.Documents.Convention);
       Assert.Equal(input.Documents.Report, updated.Documents.Report);
       Assert.Equal(input.Documents.EvaluationForm, updated.Documents.EvaluationForm);
+      Assert.Equal(eFileAlarmState.IncompleteFile, updated.FileAlarmState);
+    }
+
+    [Fact]
+    public async Task UpdateDocumentsForInternAsync_ReturnsTrue()
+    {
+      var currentDate = DateTime.Today.Date;
+      var model = new Intern
+      {
+        StartDate = currentDate,
+        EndDate = currentDate.AddMonths(1),
+        Documents = new Documents
+        {
+          CV = eDocumentState.Submitted,
+          Letter = eDocumentState.Submitted,
+          Insurance = eDocumentState.Submitted,
+          Convention = eDocumentState.Submitted,
+          Report = eDocumentState.Missing,
+          EvaluationForm = eDocumentState.Missing
+        },
+        FileAlarmState = eFileAlarmState.None
+      };
+      var id = (await repository.AddInternAsync(model)).Id;
+
+      var reportState = eDocumentState.Invalid;
+      var evalFormState = eDocumentState.Submitted;
+
+      var result = await repository.UpdateDocumentsAsync(id, reportState, evalFormState);
+
+      Assert.True(result);
+
+      var updateIntern = (await repository.GetInternAsync(id));
+      var updated = updateIntern.Documents;
+
+      Assert.Equal(reportState, updated.Report);
+      Assert.Equal(evalFormState, updated.EvaluationForm);
+      Assert.Equal(eFileAlarmState.IncompleteFile, updateIntern.FileAlarmState);
+
     }
   }
 }

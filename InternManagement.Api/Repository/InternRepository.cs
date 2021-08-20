@@ -194,5 +194,37 @@ namespace InternManagement.Api.Repository
       }
       return false;
     }
+
+    public async Task<bool> UpdateDocumentsAsync(int id, eDocumentState reportState, eDocumentState evalFormState)
+    {
+      if (await this.InternExistsAsync(id))
+      {
+        var intern = (await this.GetInternAsync(id));
+        var duration = (intern.EndDate - intern.StartDate).TotalDays / 30;
+
+        intern.Documents.Report = reportState;
+        intern.Documents.EvaluationForm = evalFormState;
+        intern.FileAlarmState = this.ProcessFile((int)duration, intern.Documents);
+        _context.Update(intern);
+        await _context.SaveChangesAsync();
+        return true;
+      }
+
+      return false;
+    }
+    private eFileAlarmState ProcessFile(int duration, Documents documents)
+    {
+      return ((duration > 1 && documents.Convention == eDocumentState.Submitted)
+      && (documents.Report == eDocumentState.Valid)
+      && (documents.EvaluationForm == eDocumentState.Submitted)
+      && (documents.CV == eDocumentState.Submitted)
+      && (documents.Letter == eDocumentState.Submitted)
+      && (documents.Insurance == eDocumentState.Submitted))
+      ?
+         eFileAlarmState.None
+      :
+         eFileAlarmState.IncompleteFile;
+
+    }
   }
 }

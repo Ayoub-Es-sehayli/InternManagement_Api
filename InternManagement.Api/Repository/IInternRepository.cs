@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using InternManagement.Api.Enums;
 using InternManagement.Api.Models;
 
 namespace InternManagement.Api.Repository
@@ -18,5 +19,6 @@ namespace InternManagement.Api.Repository
     Task<bool> SetDecisionForIntern(int id, Decision decision);
     Task<bool> SetAttestationForIntern(int id, Attestation attestation);
     Task<bool> SetCancellationForIntern(int id, Cancellation cancellation);
+    Task<bool> UpdateDocumentsAsync(int id, eDocumentState reportState, eDocumentState evalFormState);
   }
 }
