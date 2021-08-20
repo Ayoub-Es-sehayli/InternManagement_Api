@@ -23,7 +23,7 @@ namespace InternManagement.Api.Profiles
         }));
 
       CreateMap<Attendance, AttendanceDayDto>()
-        .ForMember(dto => dto.Date, opt => opt.MapFrom(a => a.time))
+        .ForMember(dto => dto.Date, opt => opt.MapFrom(a => a.date))
         .ForMember(dto => dto.Type, opt => opt.MapFrom(a => AttendanceDayDto.GetType(a.Type)));
 
       CreateMap<Intern, InternInfoDto>()
