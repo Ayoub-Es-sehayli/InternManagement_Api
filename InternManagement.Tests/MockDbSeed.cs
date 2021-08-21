@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using InternManagement.Api.Enums;
 using InternManagement.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +19,25 @@ namespace InternManagement.Tests
       this.context = new InternContext(options);
       if (!initialized)
       {
+        LoadPreferences();
         LoadDepartment();
         LoadInterns();
         initialized = true;
       }
     }
+
+    private void LoadPreferences()
+    {
+      var preference = new Preferences
+      {
+        Id = 1,
+        nAttendanceDays = 5,
+        nInterns = 4
+      };
+      context.Preferences.Add(preference);
+      context.SaveChanges();
+    }
+
     private void LoadDepartment()
     {
       var locations = new List<Location>
@@ -97,12 +110,20 @@ namespace InternManagement.Tests
 
     private void LoadInterns()
     {
-      var today = DateTime.Today;
-      var currentTime = new DateTime(2021, 8, 4, 8, 45, 00);
+      var today = DateTime.Today.AddDays(-((int)DateTime.Today.DayOfWeek - (int)DayOfWeek.Monday));
+      var currentTime = new DateTime(
+        today.Year,
+        today.Month,
+        today.Day,
+        8,
+        45,
+        0
+      );
+
 
 
       var interns = new List<Intern>();
-      for (int i = 1; i < 100; i++)
+      for (int i = 1; i < 300; i++)
       {
         interns.Add(new Intern
         {
