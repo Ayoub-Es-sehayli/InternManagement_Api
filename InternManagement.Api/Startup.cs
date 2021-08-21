@@ -1,3 +1,4 @@
+using Coravel;
 using InternManagement.Api.Helpers;
 using InternManagement.Api.Models;
 using InternManagement.Api.Profiles;
@@ -61,6 +62,7 @@ namespace InternManagement.Api
       services.AddScoped<IUserRepository, UserRepository>();
       services.AddScoped<IPreferencesRepository, PreferencesRepository>();
       services.AddScoped<IUiRepository, UiRepository>();
+      services.AddScoped<IScheduledJobsRepository, ScheduledJobsRepository>();
       #endregion
 
       services.AddAutoMapper(cfg =>
@@ -83,6 +85,8 @@ namespace InternManagement.Api
       services.AddScoped<IPreferencesService, PreferencesService>();
       services.AddScoped<IUiService, UiService>();
       #endregion
+
+      services.AddScheduler();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +109,18 @@ namespace InternManagement.Api
 
       // ! app.UseAuthorization();
 
+      app.ApplicationServices.UseScheduler(scheduler =>
+      {
+        scheduler.Schedule<Invocables.AddInternAttendanceEntry>()
+          .DailyAtHour(7)
+          .Weekday();
+        scheduler.Schedule<Invocables.FlagExcessiveAbsence>()
+          .DailyAtHour(18)
+          .Friday();
+        scheduler.Schedule<Invocables.UpdateInternState>()
+          .DailyAtHour(3)
+          .Weekday();
+      });
       app.UseEndpoints(endpoints =>
       {
         endpoints.MapControllers();
