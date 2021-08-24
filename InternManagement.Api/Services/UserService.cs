@@ -50,11 +50,6 @@ namespace InternManagement.Api.Services
       }
       return null;
     }
-    public Task<User> GetById(int id)
-    {
-      var user = _repository.FirstOrDefaultAsync(id);
-      return user;
-    }
     public async Task<IEnumerable<UserListDto>> GetUsersAsync()
     {
       var users = await _repository.GetUsersAsync();

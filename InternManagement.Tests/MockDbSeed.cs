@@ -22,6 +22,7 @@ namespace InternManagement.Tests
         LoadPreferences();
         LoadDepartment();
         LoadInterns();
+        LoadUsers();
         initialized = true;
       }
     }
@@ -200,5 +201,32 @@ namespace InternManagement.Tests
       context.SaveChanges();
     }
 
+    public void LoadUsers()
+    {
+      var users = new List<User>
+      {
+        new User
+        {
+          Id = 1,
+          FirstName = "Mohamed",
+          LastName = "Hariss",
+          Email = "m.hariss@contoso.com",
+          Password = "123456",
+          Role = eUserRole.Admin
+        },
+        new User
+        {
+          Id = 2,
+          FirstName = "Mohamed",
+          LastName = "Morabit",
+          Email = "m.morabit@contoso.com",
+          Password = "123456",
+          Role = eUserRole.Supervisor
+        }
+      };
+
+      context.Users.AddRange(users);
+      context.SaveChanges();
+    }
   }
 }

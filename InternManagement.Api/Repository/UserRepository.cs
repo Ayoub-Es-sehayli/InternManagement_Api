@@ -43,11 +43,6 @@ namespace InternManagement.Api.Repository
       }
       return user;
     }
-    public async Task<User> FirstOrDefaultAsync(int id)
-    {
-      var user = await _context.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
-      return user;
-    }
 
     public async Task<int> GetUserCountAsync()
     {
