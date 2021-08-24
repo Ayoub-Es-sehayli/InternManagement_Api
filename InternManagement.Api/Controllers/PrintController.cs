@@ -3,12 +3,14 @@ using InternManagement.Api.Dtos;
 using InternManagement.Api.Enums;
 using InternManagement.Api.Helpers;
 using InternManagement.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternManagement.Api.Controllers
 {
   [ApiController]
   [Route("/api/[controller]")]
+  [Authorize(AuthorizationPolicies.Admin)]
   public class PrintController : Controller
   {
     private readonly IPrintHelper _print;

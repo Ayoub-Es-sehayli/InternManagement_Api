@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using InternManagement.Api.Dtos;
+using InternManagement.Api.Helpers;
 using InternManagement.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternManagement.Api.Controllers
 {
   [ApiController]
   [Route("/api/{controller}")]
+  [Authorize(Policy = AuthorizationPolicies.Supervisor)]
   public class AttendanceController : Controller
   {
     private readonly IPunchInService _service;

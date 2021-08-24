@@ -1,15 +1,20 @@
+using System;
+using System.Text;
 using Coravel;
+using InternManagement.Api.Enums;
 using InternManagement.Api.Helpers;
 using InternManagement.Api.Models;
 using InternManagement.Api.Profiles;
 using InternManagement.Api.Repository;
 using InternManagement.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MySql.Data.MySqlClient;
 
@@ -27,6 +32,32 @@ namespace InternManagement.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+          options.RequireHttpsMetadata = false;
+          var jwtConfig = Configuration.GetSection("Jwt").Get<JwtConfig>();
+          options.TokenValidationParameters = new TokenValidationParameters
+          {
+
+            ValidateIssuer = true,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtConfig.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+              Encoding.UTF8.GetBytes(jwtConfig.Salt)
+            ),
+            ClockSkew = TimeSpan.Zero
+          };
+        });
+
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy(Enum.GetName(eUserRole.Admin), AuthorizationPolicies.AdminPolicy());
+        options.AddPolicy(Enum.GetName(eUserRole.Supervisor), AuthorizationPolicies.SupervisorPolicy());
+      });
       services.AddCors(builder =>
       {
         builder.AddDefaultPolicy(opt =>
@@ -103,11 +134,9 @@ namespace InternManagement.Api
 
       app.UseCors();
 
-      // TODO Setup Authorization Logic
+      app.UseAuthentication();
 
-      // ! app.UseMiddleware<JwtMiddleware>();
-
-      // ! app.UseAuthorization();
+      app.UseAuthorization();
 
       app.ApplicationServices.UseScheduler(scheduler =>
       {
