@@ -52,5 +52,13 @@ namespace InternManagement.Api.Controllers
 
       return Ok(result);
     }
+    [HttpGet]
+    [Route("{id}")]
+    public async Task<ActionResult<UserDto>> GetUserForEditAsync(int id)
+    {
+      var result = await _service.GetByIdAsync(id);
+
+      return Ok(result);
+    }
   }
 }

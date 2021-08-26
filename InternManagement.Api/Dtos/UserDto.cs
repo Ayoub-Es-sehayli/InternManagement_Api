@@ -35,12 +35,5 @@ namespace InternManagement.Api.Dtos
     [MinLength(10)]
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
-
-    [UserRolesAttribute]
-    [Required]
-    [EnumDataType(typeof(eUserRole))]
-    public eUserRole Role { get; set; }
-
-
   }
 }

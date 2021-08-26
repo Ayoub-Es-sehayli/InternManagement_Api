@@ -11,7 +11,8 @@ namespace InternManagement.Api.Services
     Task<UserDto> AddUserAsync(UserAddDto dto);
     Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model);
     Task<IEnumerable<UserListDto>> GetUsersAsync();
-    Task<User> DeleteUserAsync(int id);
+    Task<UserDto> GetByIdAsync(int id);
+    Task<UserDto> DeleteUserAsync(int id);
     Task<UserDto> EditUserAsync(int id, UserDto model);
   }
 }
