@@ -154,5 +154,36 @@ namespace InternManagement.Tests
         Assert.Equal(dtos[i].Type, result[i].Type);
       }
     }
+
+    [Fact]
+    public void MapAttendanceDto_WithEmptyArray_ReturnsEmptyGlobalArray()
+    {
+      var interns = new List<Intern>
+      {
+        new Intern
+        {
+          FirstName = "Mohamed",
+          LastName = "Hariss",
+          Attendance = null
+        },
+        new Intern
+        {
+          FirstName = "Mohamed",
+          LastName = "Morabit",
+          Attendance = new List<Attendance>()
+        }
+      };
+
+      var config = new MapperConfiguration(cfg =>
+      {
+        cfg.AddProfile<PunchInProfile>();
+      });
+      var mapper = config.CreateMapper();
+
+      var result = mapper.Map<IQueryable<AttendanceDto>>(interns);
+
+      Assert.NotNull(result);
+      Assert.Empty(result);
+    }
   }
 }

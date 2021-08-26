@@ -20,13 +20,7 @@ namespace InternManagement.Api.Repository
 
     public async Task FlagInternEnterAsync(Attendance model)
     {
-      var data = _context.Attendance
-      .Select(attendance => new Attendance
-      {
-        Id = attendance.Id,
-        InternId = attendance.InternId,
-        date = attendance.date
-      }).Where(attendance =>
+      var data = _context.Attendance.Where(attendance =>
       attendance.InternId == model.InternId
       && attendance.date == model.date
       && attendance.Type == eAttendanceType.Absent)
@@ -34,24 +28,18 @@ namespace InternManagement.Api.Repository
 
       if (data != null)
       {
-        _context.ChangeTracker.Clear();
         data.time = model.time;
         data.Type = eAttendanceType.Enter;
-        _context.Update(data);
         await _context.SaveChangesAsync();
       }
     }
 
     public async Task FlagInternExitAsync(Attendance model)
     {
-      var data = await _context.Attendance.Select(attendance => new Attendance
-      {
-        InternId = attendance.InternId,
-        date = attendance.date
-      }).Where(attendance =>
+      var data = await _context.Attendance.Where(attendance =>
         attendance.InternId == model.InternId
         && attendance.date == model.date)
-        .ToListAsync();
+        .FirstOrDefaultAsync();
       if (data != null)
       {
         var exitEntry = new Attendance
@@ -75,13 +63,16 @@ namespace InternManagement.Api.Repository
     {
       var today = DateTime.Today;
       var models = await _context.Interns
-      .Include(intern => intern.Attendance)
+      .Include(intern => intern.Attendance
+        .Where(x => x.date.Date == today.Date)
+        .OrderByDescending(x => x.Type)
+        .Take(1))
       .Select(intern => new Intern
       {
         Id = intern.Id,
         FirstName = intern.FirstName,
         LastName = intern.LastName,
-        Attendance = intern.Attendance.Where(x => x.date == today).ToList(),
+        Attendance = intern.Attendance,
         State = intern.State
       })
       .Where(intern =>
