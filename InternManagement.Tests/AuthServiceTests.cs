@@ -52,7 +52,7 @@ namespace InternManagement.Tests
       userRepositoryStub.Setup(repo => repo.UserExistsAsync(authRequest.Username, authRequest.Password).Result).Returns(user);
       var service = new UserService(userRepositoryStub.Object, mapper.Object, config);
       var result = await service.AuthenticateAsync(authRequest);
-      Assert.Matches(authRequest.Username, result.Username);
+      Assert.NotNull(result);
     }
   }
 }
