@@ -74,5 +74,10 @@ namespace InternManagement.Api.Services
       var token = tokenHandler.CreateToken(tokenDescriptor);
       return tokenHandler.WriteToken(token);
     }
+    public async Task<UserDto> GetByIdAsync(int id)
+    {
+      var user = await _repository.GetUserByIdAsync(id);
+      return _mapper.Map<UserDto>(user);
+    }
   }
 }
