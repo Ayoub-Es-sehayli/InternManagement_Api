@@ -30,10 +30,10 @@ namespace InternManagement.Api.Services
       var user = await _repository.AddUserAsync(_mapper.Map<User>(dto));
       return _mapper.Map<UserDto>(user);
     }
-    public async Task<User> DeleteUserAsync(int id)
+    public async Task<UserDto> DeleteUserAsync(int id)
     {
       var user = await _repository.DeleteUserAsync(id);
-      return user;
+      return _mapper.Map<UserDto>(user);
     }
     public async Task<UserDto> EditUserAsync(int id, UserDto model)
     {
