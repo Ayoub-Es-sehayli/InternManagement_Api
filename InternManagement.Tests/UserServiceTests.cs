@@ -42,8 +42,7 @@ namespace InternManagement.Tests
       {
         FirstName = indto.FirstName,
         LastName = indto.LastName,
-        Email = indto.Email,
-        Role = eUserRole.Supervisor
+        Email = indto.Email
       };
 
       mapper.Setup(map => map.Map<User>(indto)).Returns(model);
@@ -150,7 +149,6 @@ namespace InternManagement.Tests
         FirstName = model.FirstName,
         LastName = model.LastName,
         Email = model.Email,
-        Role = eUserRole.Supervisor,
       };
 
       var id = model.Id;

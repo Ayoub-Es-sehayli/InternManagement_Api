@@ -32,7 +32,7 @@ namespace InternManagement.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-
+      services.AddLogging();
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
@@ -117,7 +117,13 @@ namespace InternManagement.Api
       services.AddScoped<IUiService, UiService>();
       #endregion
 
+      #region Scheduled Jobs
       services.AddScheduler();
+
+      services.AddTransient<Invocables.AddInternAttendanceEntry>();
+      services.AddTransient<Invocables.FlagExcessiveAbsence>();
+      services.AddTransient<Invocables.UpdateInternState>();
+      #endregion
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,17 +144,15 @@ namespace InternManagement.Api
 
       app.UseAuthorization();
 
-      app.ApplicationServices.UseScheduler(scheduler =>
+      var provider = app.ApplicationServices;
+      provider.UseScheduler(scheduler =>
       {
         scheduler.Schedule<Invocables.AddInternAttendanceEntry>()
-          .DailyAtHour(7)
-          .Weekday();
+          .Cron("00 7 * * 1-5");
         scheduler.Schedule<Invocables.FlagExcessiveAbsence>()
-          .DailyAtHour(18)
-          .Friday();
+          .Cron("00 18 * * 5");
         scheduler.Schedule<Invocables.UpdateInternState>()
-          .DailyAtHour(3)
-          .Weekday();
+          .Cron("00 00 * * 1-5");
       });
       app.UseEndpoints(endpoints =>
       {
