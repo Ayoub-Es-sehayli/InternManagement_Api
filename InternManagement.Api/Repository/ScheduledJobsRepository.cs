@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using InternManagement.Api.Enums;
 using InternManagement.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace InternManagement.Api.Repository
 {

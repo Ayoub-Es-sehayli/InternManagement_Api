@@ -5,6 +5,8 @@ using InternManagement.Api.Enums;
 using InternManagement.Api.Models;
 using InternManagement.Api.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace InternManagement.Tests

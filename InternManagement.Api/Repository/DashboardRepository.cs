@@ -30,13 +30,13 @@ namespace InternManagement.Api.Repository
         intern.State != eInternState.Cancelled ||
         intern.State != eInternState.FileClosed);
 
-      query = query.OrderBy(intern => intern.Id);
+      query = query.OrderByDescending(intern => intern.Id);
 
       return await query.Take(5).ToListAsync();
     }
     public async Task<IEnumerable<Intern>> GetAlertInternsAsync()
     {
-      return (await this.GetInternsWithExceciveAbsence()).Concat(await this.GetInternsWithIncompleteFiles());
+      return (await this.GetInternsWithExceciveAbsence()).Concat(await this.GetInternsWithIncompleteFiles()).Take(5);
     }
 
     public async Task<IEnumerable<Intern>> GetFinishingInternsAsync()
@@ -51,9 +51,7 @@ namespace InternManagement.Api.Repository
         EndDate = intern.EndDate,
         State = intern.State
       }).Where(intern =>
-      intern.State != eInternState.Cancelled
-      && intern.State != eInternState.FileClosed
-      && intern.State != eInternState.ApplicationFilled
+      intern.State == eInternState.Started
       && intern.EndDate >= DateTime.Now
       && intern.EndDate <= limitDate)
       .OrderBy(intern => intern.EndDate);
@@ -76,6 +74,7 @@ namespace InternManagement.Api.Repository
         State = intern.State
       }).Where(intern =>
       intern.State != eInternState.FileClosed
+      && intern.State != eInternState.Finished
       && intern.State != eInternState.Cancelled
       && intern.FileAlarmState == eFileAlarmState.IncompleteFile);
 
@@ -92,9 +91,7 @@ namespace InternManagement.Api.Repository
         AttendanceAlarmState = intern.AttendanceAlarmState,
         State = intern.State
       }).Where(intern =>
-      intern.State != eInternState.Finished
-      && intern.State != eInternState.FileClosed
-      && intern.State != eInternState.Cancelled
+      intern.State == eInternState.Started
       && intern.AttendanceAlarmState == eAttendanceAlarmState.ExcessiveAbsence);
 
       return await query.Take(5).ToListAsync();
@@ -112,23 +109,20 @@ namespace InternManagement.Api.Repository
 
     public async Task<int> GetReadyToFinishCountAsync()
     {
-      var query = _context.Interns.Include(intern => intern.Documents)
-      .Select(intern => new Intern
+      var limitDate = DateTime.Now.AddDays(7);
+
+      var query = _context.Interns.Select(intern => new Intern
       {
         Id = intern.Id,
+        FirstName = intern.FirstName,
+        LastName = intern.LastName,
         EndDate = intern.EndDate,
-        State = intern.State,
-        Documents = intern.Documents
-      })
-      .Where(intern =>
+        State = intern.State
+      }).Where(intern =>
       intern.State == eInternState.Started
-      && intern.Documents.CV == eDocumentState.Submitted
-      && intern.Documents.Insurance == eDocumentState.Submitted
-      && intern.Documents.Letter == eDocumentState.Submitted
-      && intern.Documents.EvaluationForm == eDocumentState.Submitted
-      && intern.Documents.Report == eDocumentState.Valid
-      && intern.EndDate >= DateTime.Today
-      );
+      && intern.EndDate >= DateTime.Now
+      && intern.EndDate <= limitDate)
+      .OrderBy(intern => intern.EndDate);
 
       return await query.CountAsync();
     }

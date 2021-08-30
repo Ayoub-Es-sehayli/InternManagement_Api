@@ -18,11 +18,6 @@ namespace InternManagement.Api
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureLogging(config =>
-            {
-              config.ClearProviders();
-              config.AddConsole();
-            })
             .ConfigureWebHostDefaults(webBuilder =>
             {
               webBuilder.UseUrls("http://*:5000");

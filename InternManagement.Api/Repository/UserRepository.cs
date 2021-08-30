@@ -31,13 +31,12 @@ namespace InternManagement.Api.Repository
     }
     public async Task<User> EditUserAsync(int id, User model)
     {
-      var user = await GetUserByIdAsync(id);
+      var user = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
       if (user != null)
       {
         user.Email = model.Email;
         user.FirstName = model.FirstName;
         user.LastName = model.LastName;
-        user.Role = model.Role;
         _context.Users.Update(user);
         await SaveChangesAsync();
       }
